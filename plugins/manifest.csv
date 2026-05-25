@@ -1,0 +1,12 @@
+plugin_id,version,install_target,file_name,source_url,sha256,manual_source,notes
+luckperms_velocity,5.5.42,proxy,LuckPerms-Velocity-5.5.42.jar,https://luckperms.net/download,,true,Download the Velocity build from the official LuckPerms site.
+exohub,1.0.0,proxy,ExoHub-1.0.0.jar,https://modrinth.com/plugin/exohub,,true,Lightweight /hub plugin for Velocity.
+luckperms_paper,5.5.42,all-paper,LuckPerms-Bukkit-5.5.42.jar,https://luckperms.net/download,,true,Download the Bukkit/Paper build from the official LuckPerms site.
+essentialsx,2.21.2,all-paper,EssentialsX-2.21.2.jar,https://repo.essentialsx.net/releases/net/essentialsx/EssentialsX/2.21.2/EssentialsX-2.21.2.jar,,false,Core EssentialsX jar for all Paper backends.
+essentialsx_spawn,2.21.2,lobby,EssentialsXSpawn-2.21.2.jar,https://repo.essentialsx.net/releases/net/essentialsx/EssentialsXSpawn/2.21.2/EssentialsXSpawn-2.21.2.jar,,false,Lobby-only spawn management.
+worldedit,7.4,lobby,worldedit-bukkit.jar,https://worldedit.enginehub.org/en/latest/install/,,true,Download the current Bukkit/Paper jar from the official install page.
+worldguard,7.0,lobby,worldguard-bukkit.jar,https://worldguard.enginehub.org/en/latest/install/,,true,Download the current Bukkit/Paper jar from the official install page.
+quickconnect,1.0.2,lobby,QuickConnect-1.0.2.jar,https://modrinth.com/plugin/quickconnect-utility/version/wMX1NaWC,,true,Lobby selector GUI with Velocity/Bungee switching support.
+openinv,0.4.0,lobby,OpenInv-0.4.0.jar,https://www.spigotmc.org/threads/open-inventory.715860/,,true,Staff inventory access plugin.
+openinv_survival,0.4.0,survival,OpenInv-0.4.0.jar,https://www.spigotmc.org/threads/open-inventory.715860/,,true,Staff inventory access plugin.
+openinv_creative,0.4.0,creative,OpenInv-0.4.0.jar,https://www.spigotmc.org/threads/open-inventory.715860/,,true,Staff inventory access plugin.

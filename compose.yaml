@@ -1,0 +1,120 @@
+services:
+  portainer:
+    image: ${PORTAINER_IMAGE}
+    container_name: mc-admin-portainer
+    restart: unless-stopped
+    command:
+      - --http-disabled
+      - --bind-https
+      - :9443
+    ports:
+      - "${ADMIN_BIND_IP}:${PORTAINER_PORT}:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/portainer:/data
+    networks:
+      - admin
+
+  filebrowser:
+    image: ${FILEBROWSER_IMAGE}
+    container_name: mc-admin-filebrowser
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - /entrypoint.sh
+    environment:
+      TZ: ${TZ}
+      FILEBROWSER_ADMIN_USER: ${FILEBROWSER_ADMIN_USER}
+      FILEBROWSER_ADMIN_PASSWORD: ${FILEBROWSER_ADMIN_PASSWORD}
+      FILEBROWSER_PORTAL_NAME: ${FILEBROWSER_PORTAL_NAME}
+    ports:
+      - "${ADMIN_BIND_IP}:${FILEBROWSER_PORT}:80"
+    volumes:
+      - ./data/filebrowser/database:/database
+      - ./data/filebrowser/config:/config
+      - ./scripts/entrypoint-filebrowser.sh:/entrypoint.sh:ro
+      - ${TARGET_DATA_DIR}:/srv/data
+      - ${TARGET_BACKUPS_DIR}:/srv/backups
+      - ${TARGET_ACCESS_DIR}:/srv/access
+    networks:
+      - admin
+
+  olivetin:
+    build:
+      context: .
+      dockerfile: images/olivetin/Dockerfile
+      args:
+        OLIVETIN_BASE_IMAGE: ${OLIVETIN_BASE_IMAGE}
+    image: ${OLIVETIN_IMAGE}
+    container_name: mc-admin-olivetin
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      OLIVETIN_MOD_USERNAME: ${OLIVETIN_MOD_USERNAME}
+      OLIVETIN_MOD_PASSWORD: ${OLIVETIN_MOD_PASSWORD}
+      OLIVETIN_ADMIN_USERNAME: ${OLIVETIN_ADMIN_USERNAME}
+      OLIVETIN_ADMIN_PASSWORD: ${OLIVETIN_ADMIN_PASSWORD}
+      OLIVETIN_PAGE_TITLE: ${OLIVETIN_PAGE_TITLE}
+      MC_ADMIN_TARGET_ROOT_MOUNT: /target/stack
+      TARGET_STACK_ROOT: ${TARGET_STACK_ROOT}
+      TARGET_COMPOSE_PROJECT_DIR: ${TARGET_COMPOSE_PROJECT_DIR}
+      TARGET_COMPOSE_FILE: ${TARGET_COMPOSE_FILE}
+      TARGET_DATA_DIR: ${TARGET_DATA_DIR}
+      TARGET_BACKUPS_DIR: ${TARGET_BACKUPS_DIR}
+      TARGET_ACCESS_DIR: ${TARGET_ACCESS_DIR}
+      TARGET_INVITE_PLAYERS_FILE: ${TARGET_INVITE_PLAYERS_FILE}
+      TARGET_BACKUP_SCRIPT: ${TARGET_BACKUP_SCRIPT}
+      TARGET_SYNC_WHITELIST_SCRIPT: ${TARGET_SYNC_WHITELIST_SCRIPT}
+      TARGET_PROXY_CONTAINER: ${TARGET_PROXY_CONTAINER}
+      TARGET_LOBBY_CONTAINER: ${TARGET_LOBBY_CONTAINER}
+      TARGET_SURVIVAL_CONTAINER: ${TARGET_SURVIVAL_CONTAINER}
+      TARGET_CREATIVE_CONTAINER: ${TARGET_CREATIVE_CONTAINER}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      LP_DB_HOST: ${LP_DB_HOST}
+      LP_DB_PORT: ${LP_DB_PORT}
+      LP_BOOTSTRAP_MEMBER_PLAYERS: ${LP_BOOTSTRAP_MEMBER_PLAYERS}
+      LP_BOOTSTRAP_MOD_PLAYERS: ${LP_BOOTSTRAP_MOD_PLAYERS}
+      LP_BOOTSTRAP_ADMIN_PLAYERS: ${LP_BOOTSTRAP_ADMIN_PLAYERS}
+    ports:
+      - "${ADMIN_BIND_IP}:${OLIVETIN_PORT}:1337"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workspace
+      - ./data/olivetin:/data
+      - ${TARGET_STACK_ROOT}:/target/stack
+    networks:
+      - admin
+
+  mariadb:
+    image: ${MARIADB_IMAGE}
+    container_name: mc-admin-mariadb
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    ports:
+      - "${MARIADB_BIND_IP}:${MARIADB_PORT}:3306"
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD
+        - healthcheck.sh
+        - --connect
+        - --innodb_initialized
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - admin
+
+networks:
+  admin:
+    driver: bridge

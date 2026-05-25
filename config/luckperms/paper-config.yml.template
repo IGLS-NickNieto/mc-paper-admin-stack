@@ -1,0 +1,10 @@
+# Minimal LuckPerms Paper config rendered by mc-paper-admin-stack.
+server: ${LP_SERVER_CONTEXT}
+storage-method: mariadb
+messaging-service: pluginmsg
+
+data:
+  address: ${LP_DB_HOST}:${LP_DB_PORT}
+  database: ${MARIADB_DATABASE}
+  username: ${MARIADB_USER}
+  password: ${MARIADB_PASSWORD}

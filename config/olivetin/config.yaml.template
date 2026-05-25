@@ -1,0 +1,132 @@
+logLevel: "INFO"
+pageTitle: "${OLIVETIN_PAGE_TITLE}"
+showFooter: false
+showNewVersions: false
+authRequireGuestsToLogin: true
+
+authLocalUsers:
+  enabled: true
+  users:
+    - username: "${OLIVETIN_MOD_USERNAME}"
+      usergroup: mods
+      password: "${MOD_PASSWORD_HASH}"
+    - username: "${OLIVETIN_ADMIN_USERNAME}"
+      usergroup: admins
+      password: "${ADMIN_PASSWORD_HASH}"
+
+accessControlLists:
+  - name: mods
+    addToEveryAction: false
+    matchUsergroups:
+      - mods
+    permissions:
+      view: true
+      exec: true
+      logs: true
+
+  - name: admins
+    addToEveryAction: false
+    matchUsergroups:
+      - admins
+    permissions:
+      view: true
+      exec: true
+      logs: true
+
+actions:
+  - title: Backup Now
+    id: backup_now
+    icon: save
+    shell: /workspace/scripts/olive-action.sh backup_now
+    acls: [admins]
+    maxRate:
+      - limit: 2
+        duration: 30m
+
+  - title: Sync Whitelist
+    id: sync_whitelist
+    icon: users
+    shell: /workspace/scripts/olive-action.sh sync_whitelist
+    acls: [mods, admins]
+    maxRate:
+      - limit: 6
+        duration: 15m
+
+  - title: Restart Proxy
+    id: restart_proxy
+    icon: refresh
+    shell: /workspace/scripts/olive-action.sh restart_proxy
+    acls: [admins]
+    maxRate:
+      - limit: 4
+        duration: 30m
+
+  - title: Restart Lobby
+    id: restart_lobby
+    icon: refresh
+    shell: /workspace/scripts/olive-action.sh restart_lobby
+    acls: [mods, admins]
+    maxRate:
+      - limit: 4
+        duration: 30m
+
+  - title: Restart Survival
+    id: restart_survival
+    icon: refresh
+    shell: /workspace/scripts/olive-action.sh restart_survival
+    acls: [mods, admins]
+    maxRate:
+      - limit: 4
+        duration: 30m
+
+  - title: Restart Creative
+    id: restart_creative
+    icon: refresh
+    shell: /workspace/scripts/olive-action.sh restart_creative
+    acls: [mods, admins]
+    maxRate:
+      - limit: 4
+        duration: 30m
+
+  - title: Restart All Core
+    id: restart_all_core
+    icon: refresh
+    shell: /workspace/scripts/olive-action.sh restart_all_core
+    acls: [admins]
+    maxRate:
+      - limit: 2
+        duration: 1h
+
+  - title: Stage Admin State
+    id: stage_admin_state
+    icon: archive
+    shell: /workspace/scripts/olive-action.sh stage_admin_state
+    acls: [admins]
+    maxRate:
+      - limit: 4
+        duration: 30m
+
+  - title: Reapply Plugins and Configs
+    id: reapply_plugins_and_configs
+    icon: layers
+    shell: /workspace/scripts/olive-action.sh reapply_plugins_and_configs
+    acls: [admins]
+    maxRate:
+      - limit: 2
+        duration: 1h
+
+dashboards:
+  - title: Moderator
+    contents:
+      - title: Sync Whitelist
+      - title: Restart Lobby
+      - title: Restart Survival
+      - title: Restart Creative
+
+  - title: Administrator
+    contents:
+      - title: Backup Now
+      - title: Restart Proxy
+      - title: Restart All Core
+      - title: Stage Admin State
+      - title: Reapply Plugins and Configs
