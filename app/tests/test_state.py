@@ -8,7 +8,7 @@ import sqlite3
 from pathlib import Path
 
 from app import auth, db, services, state
-from app.config import Settings
+from app.config import Settings, load_settings
 
 
 def make_settings(root: Path) -> Settings:
@@ -157,6 +157,54 @@ class StateTests(unittest.TestCase):
                 self.assertIn("CONSOLE_MOD_USER=helper", env_text)
                 self.assertIn("CONSOLE_SESSION_SECRET=", env_text)
                 self.assertIn("CONSOLE_ADMIN_PASSWORD", changed)
+        finally:
+            for key, value in previous_env.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+
+    def test_load_settings_maps_target_paths_to_container_mount(self) -> None:
+        managed_keys = [
+            "TARGET_STACK_ROOT",
+            "TARGET_DATA_DIR",
+            "TARGET_BACKUPS_DIR",
+            "TARGET_ACCESS_DIR",
+            "TARGET_INVITE_PLAYERS_FILE",
+            "TARGET_SYNC_WHITELIST_SCRIPT",
+            "MC_ADMIN_TARGET_ROOT_MOUNT",
+        ]
+        previous_env = {key: os.environ.get(key) for key in managed_keys}
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                mount_root = Path(temp_dir) / "target-stack"
+                mount_root.mkdir()
+                os.environ.update(
+                    {
+                        "TARGET_STACK_ROOT": "/opt/minecraft",
+                        "TARGET_DATA_DIR": "/opt/minecraft/data",
+                        "TARGET_BACKUPS_DIR": "/opt/minecraft/backups",
+                        "TARGET_ACCESS_DIR": "/opt/minecraft/ops/access",
+                        "TARGET_INVITE_PLAYERS_FILE": "/opt/minecraft/ops/access/invite-players.txt",
+                        "TARGET_SYNC_WHITELIST_SCRIPT": "/opt/minecraft/scripts/sync-whitelist.sh",
+                        "MC_ADMIN_TARGET_ROOT_MOUNT": str(mount_root),
+                    }
+                )
+
+                settings = load_settings()
+
+                self.assertEqual(settings.target_stack_root, mount_root.resolve())
+                self.assertEqual(settings.target_data_dir, (mount_root / "data").resolve())
+                self.assertEqual(settings.target_backups_dir, (mount_root / "backups").resolve())
+                self.assertEqual(settings.target_access_dir, (mount_root / "ops" / "access").resolve())
+                self.assertEqual(
+                    settings.target_invite_players_file,
+                    (mount_root / "ops" / "access" / "invite-players.txt").resolve(),
+                )
+                self.assertEqual(
+                    settings.target_sync_whitelist_script,
+                    (mount_root / "scripts" / "sync-whitelist.sh").resolve(),
+                )
         finally:
             for key, value in previous_env.items():
                 if value is None:

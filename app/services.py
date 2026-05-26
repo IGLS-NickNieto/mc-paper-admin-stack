@@ -235,8 +235,8 @@ def directory_size_bytes(path: Path) -> int:
 
 
 def disk_growth_overview(settings: Settings) -> dict[str, Any]:
-    data_usage = shutil.disk_usage(settings.target_data_dir)
-    backups_usage = shutil.disk_usage(settings.target_backups_dir)
+    data_usage = disk_usage_or_empty(settings.target_data_dir)
+    backups_usage = disk_usage_or_empty(settings.target_backups_dir)
     return {
         "target_data_dir": str(settings.target_data_dir),
         "target_backups_dir": str(settings.target_backups_dir),
@@ -246,17 +246,31 @@ def disk_growth_overview(settings: Settings) -> dict[str, Any]:
         "target_data_dir_free_bytes": data_usage.free,
         "target_backups_dir_total_bytes": backups_usage.total,
         "target_backups_dir_free_bytes": backups_usage.free,
+        "target_data_dir_exists": settings.target_data_dir.exists(),
+        "target_backups_dir_exists": settings.target_backups_dir.exists(),
     }
 
 
+def disk_usage_or_empty(path: Path) -> shutil._ntuple_diskusage:
+    if path.exists():
+        return shutil.disk_usage(path)
+    for parent in path.parents:
+        if parent.exists():
+            return shutil.disk_usage(parent)
+    return shutil._ntuple_diskusage(total=0, used=0, free=0)
+
+
 def run_json_command(command: list[str], cwd: Path | None = None) -> dict[str, Any]:
-    completed = subprocess.run(
-        command,
-        cwd=str(cwd) if cwd else None,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=str(cwd) if cwd else None,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError as exc:
+        return {"status": "error", "returncode": 127, "message": str(exc)}
     stdout = completed.stdout.strip()
     stderr = completed.stderr.strip()
     if stdout:
