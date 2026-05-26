@@ -4,5 +4,13 @@
 data/
 plugins/manual/*.jar
 plugins/manual/.checksums/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.coverage
+.coverage.*
 .DS_Store
 Thumbs.db

@@ -23,6 +23,8 @@ This repository is designed to be safe for public GitHub upload when you keep lo
 - Do not commit manual plugin jars under `plugins/manual/`.
 - Keep real passwords, DB hostnames, and exported core-stack paths only in local `.env`.
 - `.dockerignore` excludes local env/data files from Docker build context so they are not sent to the daemon during image builds.
+- Run `./scripts/public-repo-check.sh` before pushing a public branch.
+- Use [docs/public-github-checklist.md](docs/public-github-checklist.md) as the release checklist.
 
 ## What this does not do
 
