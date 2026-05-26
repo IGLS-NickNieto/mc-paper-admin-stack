@@ -35,6 +35,22 @@ This repository is designed to be safe for public GitHub upload when you keep lo
 
 ## Quick start
 
+Recommended same-host bootstrap after the core repo is already healthy:
+
+```bash
+bash scripts/bootstrap-sidecar.sh
+```
+
+That command now:
+
+- auto-imports the core stack contract from `/opt/minecraft/scripts/export-admin-target-env.sh`
+- fills or repairs `.env` from public-safe defaults
+- prompts only for missing first-run values such as `LP_DB_HOST`
+- generates local admin passwords when placeholder values are still present
+- syncs plugins, renders LuckPerms config, starts the sidecar, and installs boot-time Git refresh
+
+Manual flow remains available if you want tighter control:
+
 1. Export the target contract from the sibling core repo:
 
    ```bash

@@ -1,0 +1,14 @@
+[Unit]
+Description=Refresh Minecraft admin sidecar from Git and start services on boot
+After=network-online.target docker.service minecraft-startup-refresh.service
+Wants=network-online.target minecraft-startup-refresh.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Update this path if the repo lives somewhere other than /opt/minecraft-admin
+WorkingDirectory=/opt/minecraft-admin
+ExecStart=/opt/minecraft-admin/scripts/startup-refresh.sh
+
+[Install]
+WantedBy=multi-user.target
