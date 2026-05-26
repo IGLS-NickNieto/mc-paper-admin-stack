@@ -13,6 +13,7 @@ services:
       CONSOLE_MOD_USER: ${CONSOLE_MOD_USER:-mod}
       CONSOLE_MOD_PASSWORD: ${CONSOLE_MOD_PASSWORD:-change-me-console-mod}
       CONSOLE_SESSION_SECRET: ${CONSOLE_SESSION_SECRET:-change-me-console-session-secret}
+      ENABLE_CONSOLE_FIRST_RUN_SETUP: ${ENABLE_CONSOLE_FIRST_RUN_SETUP:-1}
       CONSOLE_PAGE_TITLE: ${CONSOLE_PAGE_TITLE:-Minecraft Control Plane}
       MC_ADMIN_REPO_ROOT: /workspace
       MC_ADMIN_CONSOLE_DATA_DIR: /workspace/data/console
@@ -62,6 +63,7 @@ services:
       CONSOLE_MOD_USER: ${CONSOLE_MOD_USER:-mod}
       CONSOLE_MOD_PASSWORD: ${CONSOLE_MOD_PASSWORD:-change-me-console-mod}
       CONSOLE_SESSION_SECRET: ${CONSOLE_SESSION_SECRET:-change-me-console-session-secret}
+      ENABLE_CONSOLE_FIRST_RUN_SETUP: ${ENABLE_CONSOLE_FIRST_RUN_SETUP:-1}
       CONSOLE_PAGE_TITLE: ${CONSOLE_PAGE_TITLE:-Minecraft Control Plane}
       MC_ADMIN_REPO_ROOT: /workspace
       MC_ADMIN_CONSOLE_DATA_DIR: /workspace/data/console

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ console_title }}</title>
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body class="login-body">
+    <main class="login-card setup-card">
+      <span class="eyebrow">First Run</span>
+      <h1>{{ console_title }}</h1>
+      {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
+      <form method="post" action="/setup" class="stack">
+        <div class="grid two compact-grid">
+          <label>Admin Username<input type="text" name="admin_username" value="{{ values.admin_username }}" autocomplete="username" required /></label>
+          <label>Admin Password<input type="password" name="admin_password" autocomplete="new-password" minlength="8" required /></label>
+          <label>Confirm Admin Password<input type="password" name="admin_password_confirm" autocomplete="new-password" minlength="8" required /></label>
+        </div>
+        <div class="grid two compact-grid">
+          <label>Moderator Username<input type="text" name="mod_username" value="{{ values.mod_username }}" autocomplete="username" required /></label>
+          <label>Moderator Password<input type="password" name="mod_password" autocomplete="new-password" minlength="8" required /></label>
+          <label>Confirm Moderator Password<input type="password" name="mod_password_confirm" autocomplete="new-password" minlength="8" required /></label>
+        </div>
+        <button type="submit">Create Accounts</button>
+      </form>
+    </main>
+  </body>
+</html>

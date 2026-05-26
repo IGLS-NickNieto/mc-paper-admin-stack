@@ -22,6 +22,18 @@ app.mount("/static", StaticFiles(directory=str(settings.repo_root / "app" / "sta
 templates = Jinja2Templates(directory=str(settings.repo_root / "app" / "templates"))
 
 
+def console_setup_required() -> bool:
+    with db.connect(settings.database_path) as connection:
+        return auth.console_setup_required(connection, dict(os.environ))
+
+
+def setup_defaults() -> dict[str, str]:
+    return {
+        "admin_username": os.environ.get("CONSOLE_ADMIN_USER", "admin"),
+        "mod_username": os.environ.get("CONSOLE_MOD_USER", "mod"),
+    }
+
+
 def current_user(request: Request) -> dict | None:
     return request.session.get("user")
 
@@ -53,10 +65,80 @@ def render(request: Request, template_name: str, extra: dict) -> HTMLResponse:
     return templates.TemplateResponse(template_name, context)
 
 
+@app.middleware("http")
+async def first_run_setup_gate(request: Request, call_next):
+    path = request.url.path
+    if path == "/setup" or path.startswith("/static/"):
+        return await call_next(request)
+    if console_setup_required():
+        return RedirectResponse("/setup", status_code=303)
+    return await call_next(request)
+
+
 @app.on_event("startup")
 def startup() -> None:
     with db.connect(settings.database_path) as connection:
         auth.ensure_seed_users(connection, dict(os.environ))
+
+
+@app.get("/setup", response_class=HTMLResponse)
+def setup_page(request: Request) -> HTMLResponse:
+    if not console_setup_required():
+        return RedirectResponse("/login", status_code=303)
+    return render(request, "setup.html", {"error": None, "values": setup_defaults()})
+
+
+@app.post("/setup", response_class=HTMLResponse)
+async def setup_console(
+    request: Request,
+    admin_username: str = Form(...),
+    admin_password: str = Form(...),
+    admin_password_confirm: str = Form(...),
+    mod_username: str = Form(...),
+    mod_password: str = Form(...),
+    mod_password_confirm: str = Form(...),
+) -> HTMLResponse:
+    if not console_setup_required():
+        return RedirectResponse("/login", status_code=303)
+
+    values = {
+        "admin_username": admin_username.strip(),
+        "mod_username": mod_username.strip(),
+    }
+    error = None
+    if not values["admin_username"] or not values["mod_username"]:
+        error = "Both usernames are required."
+    elif values["admin_username"] == values["mod_username"]:
+        error = "Admin and moderator usernames must be different."
+    elif len(admin_password) < 8 or len(mod_password) < 8:
+        error = "Passwords must be at least 8 characters."
+    elif admin_password != admin_password_confirm:
+        error = "Admin password confirmation did not match."
+    elif mod_password != mod_password_confirm:
+        error = "Moderator password confirmation did not match."
+
+    if error:
+        return render(request, "setup.html", {"error": error, "values": values})
+
+    services.save_first_run_credentials(
+        settings,
+        values["admin_username"],
+        admin_password,
+        values["mod_username"],
+        mod_password,
+    )
+    with db.connect(settings.database_path) as connection:
+        auth.set_console_credentials(
+            connection,
+            values["admin_username"],
+            admin_password,
+            values["mod_username"],
+            mod_password,
+        )
+        user = auth.authenticate(connection, values["admin_username"], admin_password)
+
+    request.session["user"] = user
+    return RedirectResponse("/", status_code=303)
 
 
 @app.get("/login", response_class=HTMLResponse)

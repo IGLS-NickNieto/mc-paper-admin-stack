@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import secrets
 import shlex
 import shutil
 import sqlite3
@@ -11,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from . import db, state
+from . import auth, db, state
 from .config import Settings
 
 
@@ -176,6 +177,33 @@ def save_env_target(settings: Settings, target_id: str, form_data: dict[str, str
         shutil.copy2(env_path, backup_path)
     env_path.write_text("\n".join(rendered_lines).rstrip("\n") + "\n", encoding="utf-8")
     return sorted(updates.keys())
+
+
+def save_first_run_credentials(
+    settings: Settings,
+    admin_username: str,
+    admin_password: str,
+    mod_username: str,
+    mod_password: str,
+) -> list[str]:
+    env_lines = read_env_lines(settings.repo_root / ".env")
+    env_values = env_entries_from_lines(env_lines)
+    session_secret = env_values.get("CONSOLE_SESSION_SECRET", os.environ.get("CONSOLE_SESSION_SECRET", ""))
+    if auth.value_needs_setup(session_secret):
+        session_secret = secrets.token_urlsafe(32)
+
+    updates = {
+        "env_ENABLE_CONSOLE_FIRST_RUN_SETUP": "1",
+        "env_CONSOLE_ADMIN_USER": admin_username,
+        "env_CONSOLE_ADMIN_PASSWORD": admin_password,
+        "env_CONSOLE_MOD_USER": mod_username,
+        "env_CONSOLE_MOD_PASSWORD": mod_password,
+        "env_CONSOLE_SESSION_SECRET": session_secret,
+    }
+    changed_keys = save_env_target(settings, "admin", updates)
+    for key, value in updates.items():
+        os.environ[key.removeprefix("env_")] = value
+    return changed_keys
 
 
 def list_local_archives(settings: Settings) -> list[dict[str, Any]]:

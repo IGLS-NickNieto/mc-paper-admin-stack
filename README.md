@@ -47,7 +47,7 @@ That command now:
 - auto-imports the core stack contract from `/opt/minecraft/scripts/export-admin-target-env.sh`
 - fills or repairs `.env` from public-safe defaults
 - prompts only for missing first-run values such as `LP_DB_HOST`
-- generates local admin passwords when placeholder values are still present
+- sends the admin console to first-run account setup when console credentials are still placeholders
 - syncs plugins, renders LuckPerms config, starts the sidecar, and installs boot-time Git refresh
 - preserves private manual plugin jars under `plugins/manual/` across Git refreshes
 
@@ -98,6 +98,7 @@ Manual flow remains available if you want tighter control:
 
 - Admin UIs bind to the VM LAN IP recorded in `ADMIN_BIND_IP`.
 - Keep that address on a trusted LAN or VPN.
+- When `ENABLE_CONSOLE_FIRST_RUN_SETUP=1`, the console redirects to `/setup` until local admin and moderator credentials are created.
 - `Portainer` and `Filebrowser` are intended for `admin` staff only in v1.
 - `OliveTin` exposes separate `mod` and `admin` local-user logins.
 - `MariaDB` must bind to an address the core containers can reach, and `LP_DB_HOST` must point at that same VM address or hostname.

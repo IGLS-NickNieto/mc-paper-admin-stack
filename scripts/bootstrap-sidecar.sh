@@ -340,6 +340,7 @@ fi
 LP_DB_HOST_VALUE="$(prompt_for_setting "LP_DB_HOST" "LuckPerms MariaDB host visible to the core containers" "${LP_DB_HOST_DEFAULT}")"
 ENABLE_GIT_SYNC_ON_BOOT_VALUE="$(resolve_setting_or_default "ENABLE_GIT_SYNC_ON_BOOT" "${ENABLE_GIT_SYNC_ON_BOOT_DEFAULT}")"
 ENABLE_IMAGE_PULL_ON_BOOT_VALUE="$(resolve_setting_or_default "ENABLE_IMAGE_PULL_ON_BOOT" "${ENABLE_IMAGE_PULL_ON_BOOT_DEFAULT}")"
+CONSOLE_FIRST_RUN_SETUP_VALUE="$(resolve_setting_or_default "ENABLE_CONSOLE_FIRST_RUN_SETUP" "$(read_env_value .env.example "ENABLE_CONSOLE_FIRST_RUN_SETUP")")"
 
 upsert_env_var .env "TZ" "$(resolve_setting_or_default "TZ" "America/New_York")"
 upsert_env_var .env "ADMIN_BIND_IP" "$(resolve_setting_or_default "ADMIN_BIND_IP" "${ADMIN_BIND_IP_DEFAULT}")"
@@ -347,6 +348,7 @@ upsert_env_var .env "GIT_REPO_URL" "${GIT_REPO_URL}"
 upsert_env_var .env "GIT_REF" "${GIT_REF}"
 upsert_env_var .env "ENABLE_GIT_SYNC_ON_BOOT" "${ENABLE_GIT_SYNC_ON_BOOT_VALUE}"
 upsert_env_var .env "ENABLE_IMAGE_PULL_ON_BOOT" "${ENABLE_IMAGE_PULL_ON_BOOT_VALUE}"
+upsert_env_var .env "ENABLE_CONSOLE_FIRST_RUN_SETUP" "${CONSOLE_FIRST_RUN_SETUP_VALUE}"
 upsert_env_var .env "BACKUP_COMPANION_ROOT" "${BACKUP_COMPANION_ROOT_VALUE}"
 upsert_env_var .env "LP_DB_HOST" "${LP_DB_HOST_VALUE}"
 
@@ -379,7 +381,9 @@ for key in \
   MARIADB_PASSWORD \
   MARIADB_ROOT_PASSWORD; do
   current_value="$(resolve_setting_or_default "${key}" "")"
-  if value_is_placeholder "${current_value}"; then
+  if [[ "${CONSOLE_FIRST_RUN_SETUP_VALUE}" == "1" && "${key}" == CONSOLE_* ]] && value_is_placeholder "${current_value}"; then
+    current_value="$(read_env_value .env.example "${key}")"
+  elif value_is_placeholder "${current_value}"; then
     current_value="$(generate_secret)"
   fi
   if [[ -z "${current_value}" ]]; then
