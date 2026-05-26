@@ -23,6 +23,9 @@
           <a href="/perks" class="{{ 'active' if section == 'perks' else '' }}">Perks</a>
           <a href="/backups" class="{{ 'active' if section == 'backups' else '' }}">Backups</a>
           <a href="/operations" class="{{ 'active' if section == 'operations' else '' }}">Operations</a>
+          {% if user and user.role == 'admin' %}
+          <a href="/env" class="{{ 'active' if section == 'env' else '' }}">Environment</a>
+          {% endif %}
         </nav>
         {% if user %}
         <div class="user-panel">

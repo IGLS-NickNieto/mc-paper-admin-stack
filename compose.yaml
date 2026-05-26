@@ -16,6 +16,7 @@ services:
       CONSOLE_PAGE_TITLE: ${CONSOLE_PAGE_TITLE:-Minecraft Control Plane}
       MC_ADMIN_REPO_ROOT: /workspace
       MC_ADMIN_CONSOLE_DATA_DIR: /workspace/data/console
+      MC_ADMIN_TARGET_ROOT_MOUNT: /target/stack
       BACKUP_COMPANION_ROOT: /backup-companion
       TARGET_STACK_ROOT: ${TARGET_STACK_ROOT}
       TARGET_DATA_DIR: ${TARGET_DATA_DIR}
@@ -64,6 +65,7 @@ services:
       CONSOLE_PAGE_TITLE: ${CONSOLE_PAGE_TITLE:-Minecraft Control Plane}
       MC_ADMIN_REPO_ROOT: /workspace
       MC_ADMIN_CONSOLE_DATA_DIR: /workspace/data/console
+      MC_ADMIN_TARGET_ROOT_MOUNT: /target/stack
       BACKUP_COMPANION_ROOT: /backup-companion
       TARGET_STACK_ROOT: ${TARGET_STACK_ROOT}
       TARGET_DATA_DIR: ${TARGET_DATA_DIR}

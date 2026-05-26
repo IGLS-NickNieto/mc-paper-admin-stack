@@ -23,7 +23,7 @@ This repository is designed to be safe for public GitHub upload when you keep lo
 - Do not commit manual plugin jars under `plugins/manual/`.
 - Keep real passwords, DB hostnames, and exported core-stack paths only in local `.env`.
 - `.dockerignore` excludes local env/data files from Docker build context so they are not sent to the daemon during image builds.
-- Run `./scripts/public-repo-check.sh` before pushing a public branch.
+- Run `./scripts/public-repo-check.sh` and `./scripts/public-history-check.sh` before pushing a public branch.
 - Use [docs/public-github-checklist.md](docs/public-github-checklist.md) as the release checklist.
 
 ## What this does not do
@@ -49,6 +49,12 @@ That command now:
 - generates local admin passwords when placeholder values are still present
 - syncs plugins, renders LuckPerms config, starts the sidecar, and installs boot-time Git refresh
 
+After pushing repo changes, refresh the VM without rebooting:
+
+```bash
+./scripts/refresh-from-git.sh
+```
+
 Manual flow remains available if you want tighter control:
 
 1. Export the target contract from the sibling core repo:
@@ -73,7 +79,7 @@ Manual flow remains available if you want tighter control:
 
 5. Sign into the console and review the draft desired state:
 
-   - Console: `http://127.0.0.1:8088`
+   - Console: `http://<ADMIN_BIND_IP>:8088`
    - default local staff users come from `.env`
 
 6. Apply the draft state from the console, or use the scripts directly if you need to bootstrap from CLI:
@@ -88,18 +94,18 @@ Manual flow remains available if you want tighter control:
 
 ## Default access model
 
-- Admin UIs bind to `127.0.0.1` by default.
-- Reach them through local login, SSH tunnel, or VPN.
+- Admin UIs bind to the VM LAN IP recorded in `ADMIN_BIND_IP`.
+- Keep that address on a trusted LAN or VPN.
 - `Portainer` and `Filebrowser` are intended for `admin` staff only in v1.
 - `OliveTin` exposes separate `mod` and `admin` local-user logins.
 - `MariaDB` must bind to an address the core containers can reach, and `LP_DB_HOST` must point at that same VM address or hostname.
 
 Default endpoints:
 
-- Console: `http://127.0.0.1:8088`
-- Portainer: `https://127.0.0.1:9443`
-- Filebrowser: `http://127.0.0.1:8080`
-- OliveTin: `http://127.0.0.1:1337`
+- Console: `http://<ADMIN_BIND_IP>:8088`
+- Portainer: `https://<ADMIN_BIND_IP>:9443`
+- Filebrowser: `http://<ADMIN_BIND_IP>:8080`
+- OliveTin: `http://<ADMIN_BIND_IP>:1337`
 
 ## Desired state
 

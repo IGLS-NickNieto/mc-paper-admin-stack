@@ -289,7 +289,7 @@ fi
 if [[ -z "${GIT_REF}" && -n "${GIT_REPO_URL}" ]]; then
   GIT_REF="$(detect_remote_default_ref "${GIT_REPO_URL}")"
 fi
-GIT_REF="${GIT_REF:-main}"
+GIT_REF="${GIT_REF:-master}"
 
 if [[ -n "${GIT_REPO_URL}" ]]; then
   echo "Syncing admin repo into ${APP_DIR} from ${GIT_REPO_URL} (${GIT_REF})..."
@@ -331,12 +331,16 @@ LP_DB_HOST_DEFAULT="$(detect_vm_lan_ip)"
 if [[ -z "${LP_DB_HOST_DEFAULT}" ]]; then
   LP_DB_HOST_DEFAULT="$(detect_vm_host)"
 fi
+ADMIN_BIND_IP_DEFAULT="$(detect_vm_lan_ip)"
+if [[ -z "${ADMIN_BIND_IP_DEFAULT}" ]]; then
+  ADMIN_BIND_IP_DEFAULT="$(detect_vm_host)"
+fi
 LP_DB_HOST_VALUE="$(prompt_for_setting "LP_DB_HOST" "LuckPerms MariaDB host visible to the core containers" "${LP_DB_HOST_DEFAULT}")"
 ENABLE_GIT_SYNC_ON_BOOT_VALUE="$(resolve_setting_or_default "ENABLE_GIT_SYNC_ON_BOOT" "${ENABLE_GIT_SYNC_ON_BOOT_DEFAULT}")"
 ENABLE_IMAGE_PULL_ON_BOOT_VALUE="$(resolve_setting_or_default "ENABLE_IMAGE_PULL_ON_BOOT" "${ENABLE_IMAGE_PULL_ON_BOOT_DEFAULT}")"
 
 upsert_env_var .env "TZ" "$(resolve_setting_or_default "TZ" "America/New_York")"
-upsert_env_var .env "ADMIN_BIND_IP" "$(resolve_setting_or_default "ADMIN_BIND_IP" "127.0.0.1")"
+upsert_env_var .env "ADMIN_BIND_IP" "$(resolve_setting_or_default "ADMIN_BIND_IP" "${ADMIN_BIND_IP_DEFAULT}")"
 upsert_env_var .env "GIT_REPO_URL" "${GIT_REPO_URL}"
 upsert_env_var .env "GIT_REF" "${GIT_REF}"
 upsert_env_var .env "ENABLE_GIT_SYNC_ON_BOOT" "${ENABLE_GIT_SYNC_ON_BOOT_VALUE}"

@@ -43,7 +43,7 @@ check_tracked_content() {
 
   while IFS= read -r match; do
     case "${match}" in
-      scripts/public-repo-check.sh:*|docs/public-github-checklist.md:*)
+      scripts/public-repo-check.sh:*|scripts/public-history-check.sh:*|docs/public-github-checklist.md:*)
         continue
         ;;
     esac
@@ -100,9 +100,9 @@ if [[ "${lp_db_host_line}" != "LP_DB_HOST=CHANGE_ME_TO_VM_LAN_IP_OR_HOSTNAME" ]]
 fi
 
 admin_bind_line="$(grep -E '^ADMIN_BIND_IP=' .env.example || true)"
-if [[ "${admin_bind_line}" != "ADMIN_BIND_IP=127.0.0.1" ]]; then
+if [[ "${admin_bind_line}" != "ADMIN_BIND_IP=CHANGE_ME_TO_VM_LAN_IP" ]]; then
   print_matches \
-    "ADMIN_BIND_IP in .env.example should default to localhost:" \
+    "ADMIN_BIND_IP in .env.example should stay on the public-safe placeholder:" \
     "${admin_bind_line:-ADMIN_BIND_IP line missing}"
   failures=1
 fi

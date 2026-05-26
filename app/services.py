@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import shlex
 import shutil
 import sqlite3
 import subprocess
@@ -13,12 +15,167 @@ from . import db, state
 from .config import Settings
 
 
+ENV_KEY_PATTERN = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)=(.*)$")
+SENSITIVE_ENV_FRAGMENTS = ("PASSWORD", "SECRET", "TOKEN", "PRIVATE", "CREDENTIAL", "RCLONE_CONFIG")
+
+
 def ensure_runtime(settings: Settings) -> None:
     settings.data_dir.mkdir(parents=True, exist_ok=True)
     settings.generated_dir.mkdir(parents=True, exist_ok=True)
     settings.uploads_dir.mkdir(parents=True, exist_ok=True)
     db.ensure_database(settings.database_path)
     state.ensure_state_files(settings.state_dir)
+
+
+def env_value_is_sensitive(key: str) -> bool:
+    upper_key = key.upper()
+    return any(fragment in upper_key for fragment in SENSITIVE_ENV_FRAGMENTS)
+
+
+def decode_env_value(raw_value: str) -> str:
+    if raw_value == "":
+        return ""
+    try:
+        parsed = shlex.split(raw_value, posix=True)
+    except ValueError:
+        return raw_value.strip("'\"")
+    return parsed[0] if parsed else ""
+
+
+def encode_env_value(value: str) -> str:
+    return shlex.quote(value) if value else ""
+
+
+def read_env_lines(path: Path) -> list[str]:
+    if not path.exists():
+        return []
+    return path.read_text(encoding="utf-8").splitlines()
+
+
+def env_entries_from_lines(lines: list[str]) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for line in lines:
+        match = ENV_KEY_PATTERN.match(line.rstrip("\r"))
+        if match:
+            values[match.group(1)] = decode_env_value(match.group(2))
+    return values
+
+
+def env_key_order(*line_sets: list[str]) -> list[str]:
+    ordered: list[str] = []
+    seen: set[str] = set()
+    for lines in line_sets:
+        for line in lines:
+            match = ENV_KEY_PATTERN.match(line.rstrip("\r"))
+            if not match:
+                continue
+            key = match.group(1)
+            if key not in seen:
+                ordered.append(key)
+                seen.add(key)
+    return ordered
+
+
+def env_target_roots(settings: Settings) -> dict[str, dict[str, Any]]:
+    target_mount = Path(os.environ.get("MC_ADMIN_TARGET_ROOT_MOUNT", "/target/stack")).resolve()
+    core_root = target_mount if target_mount.exists() else settings.target_stack_root
+    return {
+        "admin": {"label": "Admin Stack", "root": settings.repo_root},
+        "core": {"label": "Core Stack", "root": core_root},
+        "backup": {"label": "Backup Companion", "root": settings.backup_repo_root},
+    }
+
+
+def load_env_targets(settings: Settings) -> list[dict[str, Any]]:
+    targets = []
+    for target_id, target in env_target_roots(settings).items():
+        root = Path(target["root"])
+        env_path = root / ".env"
+        example_path = root / ".env.example"
+        env_lines = read_env_lines(env_path)
+        example_lines = read_env_lines(example_path)
+        values = env_entries_from_lines(env_lines)
+        example_values = env_entries_from_lines(example_lines)
+        keys = env_key_order(example_lines, env_lines)
+        entries = []
+        for key in keys:
+            sensitive = env_value_is_sensitive(key)
+            present = key in values
+            value = values.get(key, example_values.get(key, ""))
+            entries.append(
+                {
+                    "key": key,
+                    "value": "" if sensitive else value,
+                    "masked": sensitive and present and bool(values.get(key)),
+                    "sensitive": sensitive,
+                    "present": present,
+                    "from_example": key not in values and key in example_values,
+                }
+            )
+        targets.append(
+            {
+                "id": target_id,
+                "label": target["label"],
+                "root": str(root),
+                "path": str(env_path),
+                "example_path": str(example_path),
+                "exists": env_path.exists(),
+                "example_exists": example_path.exists(),
+                "entries": entries,
+            }
+        )
+    return targets
+
+
+def env_target_by_id(settings: Settings, target_id: str) -> dict[str, Any]:
+    targets = env_target_roots(settings)
+    if target_id not in targets:
+        raise KeyError(f"Unknown env target: {target_id}")
+    return targets[target_id]
+
+
+def save_env_target(settings: Settings, target_id: str, form_data: dict[str, str]) -> list[str]:
+    target = env_target_by_id(settings, target_id)
+    root = Path(target["root"])
+    env_path = root / ".env"
+    example_path = root / ".env.example"
+    existing_lines = read_env_lines(env_path)
+    example_lines = read_env_lines(example_path)
+    base_lines = existing_lines if existing_lines else example_lines
+    current_values = env_entries_from_lines(existing_lines)
+    known_keys = env_key_order(example_lines, existing_lines)
+    updates: dict[str, str] = {}
+
+    for key in known_keys:
+        field_name = f"env_{key}"
+        if field_name not in form_data:
+            continue
+        submitted = form_data[field_name]
+        if env_value_is_sensitive(key) and submitted == "" and key in current_values:
+            continue
+        updates[key] = submitted
+
+    rendered_lines: list[str] = []
+    updated_existing: set[str] = set()
+    for line in base_lines:
+        match = ENV_KEY_PATTERN.match(line.rstrip("\r"))
+        if match and match.group(1) in updates:
+            key = match.group(1)
+            rendered_lines.append(f"{key}={encode_env_value(updates[key])}")
+            updated_existing.add(key)
+        else:
+            rendered_lines.append(line.rstrip("\r"))
+
+    for key, value in updates.items():
+        if key not in updated_existing:
+            rendered_lines.append(f"{key}={encode_env_value(value)}")
+
+    env_path.parent.mkdir(parents=True, exist_ok=True)
+    if env_path.exists():
+        backup_path = env_path.with_name(f".env.backup-{datetime.now(tz=timezone.utc).strftime('%Y%m%d%H%M%S')}")
+        shutil.copy2(env_path, backup_path)
+    env_path.write_text("\n".join(rendered_lines).rstrip("\n") + "\n", encoding="utf-8")
+    return sorted(updates.keys())
 
 
 def list_local_archives(settings: Settings) -> list[dict[str, Any]]:

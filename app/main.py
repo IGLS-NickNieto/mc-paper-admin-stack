@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -373,6 +373,36 @@ def operations_page(request: Request) -> HTMLResponse:
         return RedirectResponse("/login", status_code=303)
     status = services.status_overview(settings)
     return render(request, "operations.html", {"section": "operations", "status": status})
+
+
+@app.get("/env", response_class=HTMLResponse)
+def env_page(request: Request) -> HTMLResponse:
+    try:
+        require_admin(request)
+    except PermissionError:
+        if current_user(request) is None:
+            return RedirectResponse("/login", status_code=303)
+        raise HTTPException(status_code=403, detail="admin required")
+    return render(
+        request,
+        "env.html",
+        {
+            "section": "env",
+            "targets": services.load_env_targets(settings),
+            "saved": request.query_params.get("saved", ""),
+        },
+    )
+
+
+@app.post("/env/{target_id}")
+async def update_env(request: Request, target_id: str) -> RedirectResponse:
+    user = require_admin(request)
+    form = await request.form()
+    changed_keys = services.save_env_target(settings, target_id, {key: str(value) for key, value in form.items()})
+    with db.connect(settings.database_path) as connection:
+        db.add_audit_log(connection, user["username"], "update_env", {"target": target_id, "keys": changed_keys})
+        connection.commit()
+    return RedirectResponse(f"/env?saved={target_id}", status_code=303)
 
 
 @app.post("/operations/{action}")

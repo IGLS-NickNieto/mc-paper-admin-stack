@@ -10,10 +10,10 @@
 ## Runtime validation
 
 - Start the sidecar with `docker compose up -d`.
-- Confirm the console is reachable only on `http://127.0.0.1:${CONSOLE_PORT}` by default.
-- Confirm Portainer is reachable only on `https://127.0.0.1:${PORTAINER_PORT}` by default.
-- Confirm Filebrowser is reachable only on `http://127.0.0.1:${FILEBROWSER_PORT}` by default.
-- Confirm OliveTin is reachable only on `http://127.0.0.1:${OLIVETIN_PORT}` by default.
+- Confirm the console is reachable on `http://${ADMIN_BIND_IP}:${CONSOLE_PORT}`.
+- Confirm Portainer is reachable on `https://${ADMIN_BIND_IP}:${PORTAINER_PORT}`.
+- Confirm Filebrowser is reachable on `http://${ADMIN_BIND_IP}:${FILEBROWSER_PORT}`.
+- Confirm OliveTin is reachable on `http://${ADMIN_BIND_IP}:${OLIVETIN_PORT}`.
 - Confirm MariaDB is bound only to `MARIADB_BIND_IP:MARIADB_PORT`.
 
 ## Core integration
@@ -28,7 +28,7 @@
 
 ## Functional checks
 
-- The console shows `Dashboard`, `Servers`, `Worlds`, `Players`, `Plugins`, `Perks`, `Backups`, and `Operations`.
+- The console shows `Dashboard`, `Servers`, `Worlds`, `Players`, `Plugins`, `Perks`, `Backups`, `Operations`, and `Environment`.
 - The console shows a `Policies` page with approved-now features, delayed features, and safe-now datapacks.
 - Saving a draft server profile change updates `config/console/servers.json`.
 - Applying draft state updates the running core profile config through `scripts/admin-apply-profile.sh`.
