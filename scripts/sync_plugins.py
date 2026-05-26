@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 import urllib.request
@@ -111,12 +111,7 @@ def main() -> int:
                   download_plugin(source_path, entry["source_url"])
                   checksum = entry.get("sha256") or fetch_adjacent_sha256(entry["source_url"])
                   if checksum:
-                      calculated = subprocess.run(
-                          ["python", "-c", "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())", str(source_path)],
-                          capture_output=True,
-                          text=True,
-                          check=True,
-                      ).stdout.strip()
+                      calculated = hashlib.sha256(source_path.read_bytes()).hexdigest()
                       if calculated != checksum:
                           failures.append(f"Checksum mismatch for {entry['file_name']}")
                           continue

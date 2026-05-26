@@ -8,4 +8,4 @@ source "${SCRIPT_DIR}/lib/common.sh"
 load_admin_env
 require_envs TARGET_DATA_DIR
 
-python "${SCRIPT_DIR}/sync_plugins.py" "$@"
+python3 "${SCRIPT_DIR}/sync_plugins.py" "$@"

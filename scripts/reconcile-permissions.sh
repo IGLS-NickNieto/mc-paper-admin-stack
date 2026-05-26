@@ -7,4 +7,4 @@ source "${SCRIPT_DIR}/lib/common.sh"
 
 load_admin_env
 require_envs TARGET_PROXY_CONTAINER
-python "${SCRIPT_DIR}/reconcile_permissions.py" "$@"
+python3 "${SCRIPT_DIR}/reconcile_permissions.py" "$@"
