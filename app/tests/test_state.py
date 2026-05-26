@@ -2,10 +2,21 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import importlib.util
 from pathlib import Path
 
 from app import services, state
 from app.config import Settings
+
+
+def load_sync_plugins_module():
+    module_path = Path(__file__).resolve().parents[2] / "scripts" / "sync_plugins.py"
+    spec = importlib.util.spec_from_file_location("sync_plugins", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to load sync_plugins.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 class StateTests(unittest.TestCase):
@@ -52,6 +63,26 @@ class StateTests(unittest.TestCase):
             self.assertEqual(changed, ["PLAIN"])
             self.assertIn("PLAIN='new value'", env_text)
             self.assertIn("SECRET_TOKEN=keep-me", env_text)
+
+    def test_import_manual_plugin_from_private_source(self) -> None:
+        sync_plugins = load_sync_plugins_module()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            manual_dir = root / "plugins" / "manual"
+            source_dir = root / "private" / "approved-now" / "luckperms"
+            source_dir.mkdir(parents=True)
+            source_file = source_dir / "LuckPerms-Bukkit-5.5.50.jar"
+            source_file.write_bytes(b"jar")
+
+            imported, imported_from = sync_plugins.import_manual_plugin(
+                manual_dir,
+                "LuckPerms-Bukkit-5.5.50.jar",
+                [root / "private"],
+            )
+
+            self.assertEqual(imported, manual_dir / "LuckPerms-Bukkit-5.5.50.jar")
+            self.assertEqual(imported_from, source_file)
+            self.assertEqual((manual_dir / "LuckPerms-Bukkit-5.5.50.jar").read_bytes(), b"jar")
 
 
 if __name__ == "__main__":

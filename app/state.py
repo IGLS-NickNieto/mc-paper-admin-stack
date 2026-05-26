@@ -131,8 +131,8 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
         "catalog": [
             {
                 "plugin_id": "luckperms_velocity",
-                "version": "5.5.42",
-                "file_name": "LuckPerms-Velocity-5.5.42.jar",
+                "version": "5.5.50",
+                "file_name": "LuckPerms-Velocity-5.5.50.jar",
                 "source_url": "https://luckperms.net/download",
                 "sha256": "",
                 "manual_source": True,
@@ -157,8 +157,8 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
             },
             {
                 "plugin_id": "luckperms_paper",
-                "version": "5.5.42",
-                "file_name": "LuckPerms-Bukkit-5.5.42.jar",
+                "version": "5.5.50",
+                "file_name": "LuckPerms-Bukkit-5.5.50.jar",
                 "source_url": "https://luckperms.net/download",
                 "sha256": "",
                 "manual_source": True,
@@ -196,8 +196,8 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
             },
             {
                 "plugin_id": "worldedit",
-                "version": "7.4",
-                "file_name": "worldedit-bukkit.jar",
+                "version": "7.4.3",
+                "file_name": "worldedit-bukkit-7.4.3.jar",
                 "source_url": "https://worldedit.enginehub.org/en/latest/install/",
                 "sha256": "",
                 "manual_source": True,
@@ -209,8 +209,8 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
             },
             {
                 "plugin_id": "worldguard",
-                "version": "7.0",
-                "file_name": "worldguard-bukkit.jar",
+                "version": "7.0.16",
+                "file_name": "worldguard-bukkit-7.0.16.jar",
                 "source_url": "https://worldguard.enginehub.org/en/latest/install/",
                 "sha256": "",
                 "manual_source": True,
@@ -236,7 +236,7 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
             {
                 "plugin_id": "openinv",
                 "version": "0.4.0",
-                "file_name": "OpenInv-0.4.0.jar",
+                "file_name": "OpenInv.jar",
                 "source_url": "https://www.spigotmc.org/threads/open-inventory.715860/",
                 "sha256": "",
                 "manual_source": True,
@@ -248,8 +248,8 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
             },
             {
                 "plugin_id": "spark",
-                "version": "recommended-manual",
-                "file_name": "spark-paper.jar",
+                "version": "1.10.172",
+                "file_name": "spark-1.10.172-paper.jar",
                 "source_url": "https://spark.lucko.me/download",
                 "sha256": "",
                 "manual_source": True,
@@ -261,8 +261,8 @@ DEFAULT_STATE: dict[str, dict[str, Any]] = {
             },
             {
                 "plugin_id": "bluemap",
-                "version": "recommended-manual",
-                "file_name": "BlueMap.jar",
+                "version": "5.20",
+                "file_name": "bluemap-5.20-paper.jar",
                 "source_url": "https://bluemap.bluecolored.de/",
                 "sha256": "",
                 "manual_source": True,

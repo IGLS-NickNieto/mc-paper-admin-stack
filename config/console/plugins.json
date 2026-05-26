@@ -28,7 +28,7 @@
     {
       "bedrock_risk_level": "safe",
       "description": "LuckPerms on Velocity.",
-      "file_name": "LuckPerms-Velocity-5.5.42.jar",
+      "file_name": "LuckPerms-Velocity-5.5.50.jar",
       "install_target": "proxy",
       "manual_source": true,
       "owner": "admin-stack",
@@ -36,7 +36,7 @@
       "rollout_phase": "approved-now",
       "sha256": "",
       "source_url": "https://luckperms.net/download",
-      "version": "5.5.42"
+      "version": "5.5.50"
     },
     {
       "bedrock_risk_level": "safe",
@@ -54,7 +54,7 @@
     {
       "bedrock_risk_level": "safe",
       "description": "LuckPerms on Paper backends.",
-      "file_name": "LuckPerms-Bukkit-5.5.42.jar",
+      "file_name": "LuckPerms-Bukkit-5.5.50.jar",
       "install_target": "all-paper",
       "manual_source": true,
       "owner": "admin-stack",
@@ -62,7 +62,7 @@
       "rollout_phase": "approved-now",
       "sha256": "",
       "source_url": "https://luckperms.net/download",
-      "version": "5.5.42"
+      "version": "5.5.50"
     },
     {
       "bedrock_risk_level": "safe",
@@ -93,7 +93,7 @@
     {
       "bedrock_risk_level": "safe",
       "description": "World editing for lobby staff.",
-      "file_name": "worldedit-bukkit.jar",
+      "file_name": "worldedit-bukkit-7.4.3.jar",
       "install_target": "lobby",
       "manual_source": true,
       "owner": "admin-stack",
@@ -101,12 +101,12 @@
       "rollout_phase": "approved-now",
       "sha256": "",
       "source_url": "https://worldedit.enginehub.org/en/latest/install/",
-      "version": "7.4"
+      "version": "7.4.3"
     },
     {
       "bedrock_risk_level": "safe",
       "description": "Lobby protection regions.",
-      "file_name": "worldguard-bukkit.jar",
+      "file_name": "worldguard-bukkit-7.0.16.jar",
       "install_target": "lobby",
       "manual_source": true,
       "owner": "admin-stack",
@@ -114,7 +114,7 @@
       "rollout_phase": "approved-now",
       "sha256": "",
       "source_url": "https://worldguard.enginehub.org/en/latest/install/",
-      "version": "7.0"
+      "version": "7.0.16"
     },
     {
       "bedrock_risk_level": "safe",
@@ -132,7 +132,7 @@
     {
       "bedrock_risk_level": "safe",
       "description": "Staff inventory access.",
-      "file_name": "OpenInv-0.4.0.jar",
+      "file_name": "OpenInv.jar",
       "install_target": "all-paper",
       "manual_source": true,
       "owner": "admin-stack",
@@ -145,7 +145,7 @@
     {
       "bedrock_risk_level": "safe",
       "description": "Performance profiling and MSPT/TPS diagnostics.",
-      "file_name": "spark-paper.jar",
+      "file_name": "spark-1.10.172-paper.jar",
       "install_target": "all-paper",
       "manual_source": true,
       "owner": "admin-stack",
@@ -153,12 +153,12 @@
       "rollout_phase": "approved-now",
       "sha256": "",
       "source_url": "https://spark.lucko.me/download",
-      "version": "recommended-manual"
+      "version": "1.10.172"
     },
     {
       "bedrock_risk_level": "medium",
       "description": "Map rendering. Delay until cleanup and storage policy are proven.",
-      "file_name": "BlueMap.jar",
+      "file_name": "bluemap-5.20-paper.jar",
       "install_target": "all-paper",
       "manual_source": true,
       "owner": "admin-stack",
@@ -166,7 +166,7 @@
       "rollout_phase": "optional-later",
       "sha256": "",
       "source_url": "https://bluemap.bluecolored.de/",
-      "version": "recommended-manual"
+      "version": "5.20"
     }
   ]
 }

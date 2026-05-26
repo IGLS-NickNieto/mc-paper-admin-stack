@@ -21,6 +21,7 @@ This repository is designed to be safe for public GitHub upload when you keep lo
 - Do not commit `.env`.
 - Do not commit anything under `data/`.
 - Do not commit manual plugin jars under `plugins/manual/`.
+- Keep `mc-feature-ops` and any manual plugin source folder private/local.
 - Keep real passwords, DB hostnames, and exported core-stack paths only in local `.env`.
 - `.dockerignore` excludes local env/data files from Docker build context so they are not sent to the daemon during image builds.
 - Run `./scripts/public-repo-check.sh` and `./scripts/public-history-check.sh` before pushing a public branch.
@@ -48,6 +49,7 @@ That command now:
 - prompts only for missing first-run values such as `LP_DB_HOST`
 - generates local admin passwords when placeholder values are still present
 - syncs plugins, renders LuckPerms config, starts the sidecar, and installs boot-time Git refresh
+- preserves private manual plugin jars under `plugins/manual/` across Git refreshes
 
 After pushing repo changes, refresh the VM without rebooting:
 
@@ -131,6 +133,14 @@ Plugin versions and install targets are primarily tracked in [config/console/plu
 
 - Automated downloads are copied directly into the mounted core runtime plugin folders.
 - Manual-source plugins go in `plugins/manual/`.
+- Public Git refresh intentionally preserves but never downloads or commits manual jars.
+- To import jars from a private folder, set `MANUAL_PLUGIN_SOURCE_DIR` in `.env` or run:
+
+  ```bash
+  ./scripts/import-manual-plugins.sh /path/to/mc-feature-ops/mods/manual-plugins
+  ```
+
+- `ALLOW_MISSING_MANUAL_PLUGINS=1` lets the admin UI boot with warnings if private jars have not been staged yet. Set it to `0` or run `./scripts/sync-plugins.sh --strict-manual` for a hard failure.
 - `plugins/manifest.csv` remains as a legacy compatibility export for the existing plugin list.
 - Use [docs/plugin-management.md](docs/plugin-management.md) for the workflow and current defaults.
 

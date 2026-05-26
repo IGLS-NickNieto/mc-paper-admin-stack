@@ -61,6 +61,50 @@ def download_plugin(target_path: Path, source_url: str) -> None:
         shutil.copyfileobj(response, handle)
 
 
+def env_flag(name: str, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def manual_plugin_source_roots() -> list[Path]:
+    roots: list[Path] = []
+    raw_source = os.environ.get("MANUAL_PLUGIN_SOURCE_DIR", "")
+    for item in raw_source.split(os.pathsep):
+        if item.strip():
+            roots.append(Path(item).expanduser())
+
+    feature_ops_root = os.environ.get("MC_FEATURE_OPS_ROOT", "")
+    if feature_ops_root.strip():
+        roots.append(Path(feature_ops_root).expanduser() / "mods" / "manual-plugins")
+
+    return roots
+
+
+def import_manual_plugin(manual_dir: Path, file_name: str, source_roots: list[Path]) -> tuple[Path | None, Path | None]:
+    direct_path = manual_dir / file_name
+    if direct_path.exists():
+        return direct_path, None
+
+    for root in source_roots:
+        if root.is_file() and root.name == file_name:
+            source_path = root
+        elif root.is_dir():
+            matches = sorted(path for path in root.rglob(file_name) if path.is_file())
+            if not matches:
+                continue
+            source_path = matches[0]
+        else:
+            continue
+
+        manual_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, direct_path)
+        return direct_path, source_path
+
+    return None, None
+
+
 def plugin_targets(target_data_dir: Path, install_target: str) -> list[Path]:
     mapping = {
         "proxy": [target_data_dir / "proxy" / "plugins"],
@@ -86,45 +130,63 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--plan")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--allow-missing-manual", action="store_true")
+    parser.add_argument("--strict-manual", action="store_true")
     args = parser.parse_args()
 
     repo_root = Path(__file__).resolve().parents[1]
     target_data_dir = Path(os.environ["TARGET_DATA_DIR"]).resolve()
     manual_dir = repo_root / "plugins" / "manual"
+    source_roots = manual_plugin_source_roots()
+    allow_missing_manual = args.allow_missing_manual or env_flag("ALLOW_MISSING_MANUAL_PLUGINS", True)
+    if args.strict_manual:
+        allow_missing_manual = False
     plan = load_plan(Path(args.plan).resolve() if args.plan else None, repo_root)
 
     failures: list[str] = []
+    warnings: list[str] = []
+    imports: list[dict] = []
     synced: list[dict] = []
     with tempfile.TemporaryDirectory() as temp_dir:
-      temp_root = Path(temp_dir)
-      for service_name, entries in plan["plans"].items():
-          for entry in entries:
-              install_target = entry.get("install_target", service_name)
-              source_path = None
-              if entry.get("manual_source"):
-                  source_path = manual_dir / entry["file_name"]
-                  if not source_path.exists():
-                      failures.append(f"Missing manual plugin jar: {source_path}")
-                      continue
-              else:
-                  source_path = temp_root / entry["file_name"]
-                  download_plugin(source_path, entry["source_url"])
-                  checksum = entry.get("sha256") or fetch_adjacent_sha256(entry["source_url"])
-                  if checksum:
-                      calculated = hashlib.sha256(source_path.read_bytes()).hexdigest()
-                      if calculated != checksum:
-                          failures.append(f"Checksum mismatch for {entry['file_name']}")
-                          continue
+        temp_root = Path(temp_dir)
+        for service_name, entries in plan["plans"].items():
+            for entry in entries:
+                install_target = entry.get("install_target", service_name)
+                source_path = None
+                if entry.get("manual_source"):
+                    source_path, imported_from = import_manual_plugin(manual_dir, entry["file_name"], source_roots)
+                    if imported_from:
+                        imports.append({"file_name": entry["file_name"], "source": str(imported_from)})
+                    if source_path is None:
+                        message = f"Missing manual plugin jar: {manual_dir / entry['file_name']}"
+                        if allow_missing_manual:
+                            warnings.append(message)
+                        else:
+                            failures.append(message)
+                        continue
+                else:
+                    source_path = temp_root / entry["file_name"]
+                    download_plugin(source_path, entry["source_url"])
+                    checksum = entry.get("sha256") or fetch_adjacent_sha256(entry["source_url"])
+                    if checksum:
+                        calculated = hashlib.sha256(source_path.read_bytes()).hexdigest()
+                        if calculated != checksum:
+                            failures.append(f"Checksum mismatch for {entry['file_name']}")
+                            continue
 
-              install_plugin(source_path, plugin_targets(target_data_dir, install_target))
-              synced.append({"plugin_id": entry["plugin_id"], "install_target": install_target})
+                install_plugin(source_path, plugin_targets(target_data_dir, install_target))
+                synced.append({"plugin_id": entry["plugin_id"], "install_target": install_target})
 
-    payload = {"status": "error" if failures else "success", "synced": synced, "failures": failures}
+    payload = {"status": "error" if failures else "success", "synced": synced, "imports": imports, "warnings": warnings, "failures": failures}
     if args.json:
         print(json.dumps(payload, sort_keys=True))
     else:
+        for item in imports:
+            print(f"Imported manual plugin jar: {item['file_name']} <- {item['source']}")
         for item in synced:
             print(f"Synced {item['plugin_id']} -> {item['install_target']}")
+        for warning in warnings:
+            print(warning, file=sys.stderr)
         if failures:
             for failure in failures:
                 print(failure, file=sys.stderr)

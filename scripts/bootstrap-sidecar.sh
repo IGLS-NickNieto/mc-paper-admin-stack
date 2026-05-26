@@ -363,6 +363,8 @@ for key in \
   MARIADB_USER \
   MARIADB_BIND_IP \
   MARIADB_PORT \
+  ALLOW_MISSING_MANUAL_PLUGINS \
+  MANUAL_PLUGIN_SOURCE_DIR \
   LP_DB_PORT; do
   upsert_env_var .env "${key}" "$(resolve_setting_or_default "${key}" "$(read_env_value .env.example "${key}")")"
 done

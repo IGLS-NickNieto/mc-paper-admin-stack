@@ -38,6 +38,9 @@ Columns:
 - If `sha256` is blank, the sync script attempts to fetch an adjacent `.sha256` file from the same upstream URL.
 - Manual-source entries expect the jar in `plugins/manual/`.
 - Manual-source entries are used when upstream downloads are gated, redistribution is unclear, or the approved source is a project page instead of a stable artifact URL.
+- Manual jars stay private/local and are ignored by Git. Git refresh preserves `plugins/manual/` but never populates it from the public repo.
+- If a private source folder exists on the VM, set `MANUAL_PLUGIN_SOURCE_DIR=/path/to/private/manual-plugins` and `scripts/sync-plugins.sh` will import matching approved filenames into `plugins/manual/`.
+- `ALLOW_MISSING_MANUAL_PLUGINS=1` warns and skips missing manual jars so the admin UI can still boot. Use `scripts/sync-plugins.sh --strict-manual` when you want missing manual jars to fail the run.
 
 ## Current default set
 
@@ -48,7 +51,12 @@ Columns:
 
 ## Workflow
 
-1. Place any required manual jars into `plugins/manual/`.
+1. Place any required manual jars into `plugins/manual/`, or import them from a private source:
+
+   ```bash
+   ./scripts/import-manual-plugins.sh /path/to/mc-feature-ops/mods/manual-plugins
+   ```
+
 2. Update plugin catalog entries or bundle assignments in `config/console/plugins.json` and `config/console/servers.json`.
 3. Run `./scripts/sync-plugins.sh`.
 4. Run `./scripts/render-luckperms-config.sh`.
