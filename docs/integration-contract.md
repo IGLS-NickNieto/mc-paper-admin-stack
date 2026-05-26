@@ -1,6 +1,7 @@
 # Integration Contract
 
 `mc-paper-admin-stack` treats `mc-paper-velocity-geyser-stack` as an external runtime.
+It also treats the sibling `mc-backup-google-drive` repo as the external recovery engine.
 
 ## Required inputs
 
@@ -27,6 +28,7 @@ Required target variables:
 - `TARGET_LOBBY_CONTAINER`
 - `TARGET_SURVIVAL_CONTAINER`
 - `TARGET_CREATIVE_CONTAINER`
+- `BACKUP_COMPANION_ROOT`
 
 ## Contract rules
 
@@ -36,3 +38,7 @@ Required target variables:
 - This repo mounts and manages the existing core runtime folders in place.
 - Whitelist source-of-truth remains the core repo's invite file plus whitelist sync script.
 - Backup source-of-truth remains the core repo's backup script; this repo stages admin state before invoking it.
+- Offsite snapshot, staged restore, verification, and rollback promotion remain owned by the backup companion repo.
+- The admin app expects machine-readable hooks from the sibling repos:
+  - core runtime: `scripts/admin-status.sh`, `scripts/admin-apply-profile.sh`, `scripts/sync-whitelist.sh --json`, `scripts/backup-worlds.sh --json`
+  - backup companion: `scripts/list-snapshots.sh --json`, `scripts/offsite-backup.sh --json`, `scripts/restore-to-staging.sh --json`, `scripts/backup-verify.sh --json`, `scripts/promote-rollback.sh --json`

@@ -1,0 +1,49 @@
+{
+  "approved_features_now": [
+    "Velocity proxy",
+    "Geyser and Floodgate on the proxy",
+    "LuckPerms",
+    "Spark profiling",
+    "safe Vanilla Tweaks datapacks only",
+    "world border and pregeneration planning",
+    "boring verified backups and restore drills"
+  ],
+  "cleanup_policy": {
+    "crash_report_retention_days": 30,
+    "disk_growth_signals": {
+      "backups_dir_warn_percent": 85,
+      "data_dir_warn_percent": 80,
+      "suspicious_growth_gb": 5
+    },
+    "entity_farm_limits": [
+      "avoid giant villager halls without caps",
+      "avoid oversized item-frame walls",
+      "avoid always-on redstone clocks"
+    ],
+    "log_retention_days": 14,
+    "maintenance_window": "Tuesday 03:00-04:00 America/New_York",
+    "manual_chunk_pruning_requires_restore_test": true,
+    "spark_report_retention_days": 14
+  },
+  "delayed_features": [
+    "custom resource packs",
+    "custom item models",
+    "custom sounds",
+    "voice chat",
+    "map rendering",
+    "large public-server plugin stacks"
+  ],
+  "observability": {
+    "alerts": [
+      "proxy process down",
+      "backend process down",
+      "TPS below 18 sustained",
+      "MSPT above 50 sustained",
+      "disk above 80%",
+      "backup failure",
+      "Java TCP 25565 unreachable",
+      "Bedrock UDP 19132 unreachable"
+    ],
+    "backup_freshness_target_hours": 24
+  }
+}

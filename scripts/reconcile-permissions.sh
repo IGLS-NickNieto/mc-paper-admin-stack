@@ -6,6 +6,5 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/common.sh"
 
 load_admin_env
-require_envs TARGET_DATA_DIR
-
-python "${SCRIPT_DIR}/sync_plugins.py" "$@"
+require_envs TARGET_PROXY_CONTAINER
+python "${SCRIPT_DIR}/reconcile_permissions.py" "$@"

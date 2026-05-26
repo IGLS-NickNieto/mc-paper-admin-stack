@@ -4,13 +4,15 @@ Docker Compose sidecar for administering an existing `mc-paper-velocity-geyser-s
 
 This repo owns the admin layer only:
 
+- `Console` as the primary web control plane for servers, worlds, players, plugins, perks, backups, and operations
 - `Portainer` for container visibility and restarts
 - `Filebrowser` for world, player, backup, and access-file management
 - `OliveTin` for one-click operational workflows
 - `MariaDB` for shared `LuckPerms`
-- operational plugin manifests, config, and permissions bootstrap
+- repo-file desired state, operational plugin catalogs, and permissions reconcile
 
 The core stack remains the owner of bootstrap, Docker runtime, Paper/Velocity/Geyser/Floodgate, whitelist sync, backups, restore, and world storage.
+The sibling `mc-backup-google-drive` repo remains the owner of offsite snapshots, staged restore, verification, and rollback promotion.
 
 ## Public repo safety
 
@@ -51,15 +53,20 @@ This repository is designed to be safe for public GitHub upload when you keep lo
    docker compose up -d --build
    ```
 
-5. Install the plugin set and configs into the existing core runtime:
+5. Sign into the console and review the draft desired state:
+
+   - Console: `http://127.0.0.1:8088`
+   - default local staff users come from `.env`
+
+6. Apply the draft state from the console, or use the scripts directly if you need to bootstrap from CLI:
 
    ```bash
    ./scripts/sync-plugins.sh
    ./scripts/render-luckperms-config.sh
-   ./scripts/bootstrap-permissions.sh
+   ./scripts/reconcile-permissions.sh
    ```
 
-6. Restart the target proxy and backend containers from Portainer or OliveTin.
+7. Restart the target proxy and backend containers from the console, Portainer, or OliveTin if you applied changes manually.
 
 ## Default access model
 
@@ -71,21 +78,41 @@ This repository is designed to be safe for public GitHub upload when you keep lo
 
 Default endpoints:
 
+- Console: `http://127.0.0.1:8088`
 - Portainer: `https://127.0.0.1:9443`
 - Filebrowser: `http://127.0.0.1:8080`
 - OliveTin: `http://127.0.0.1:1337`
 
+## Desired state
+
+Tracked control-plane state lives in [`config/console/`](config/console):
+
+- `servers.json`: profile settings, world assignment, whitelist mode, plugin bundles
+- `worlds.json`: imported world catalog and artifact metadata
+- `plugins.json`: plugin catalog plus reusable bundles
+- `perks.json`: LuckPerms groups and perk bundles
+- `players.json`: player roles, perks, notes, and whitelist intent
+- `whitelist.json`: invite list source-of-truth used to render the core whitelist file
+
+The console edits these files and the worker applies them to the running stack through machine-readable scripts in the sibling repos.
+
+Additional tracked stabilization state:
+
+- `policy.json`: approved-now features, delayed features, cleanup thresholds, and alert posture
+- `datapacks.json`: `safe_now` and `delayed` datapack allowlists with Bedrock-risk notes
+
 ## Plugin ownership
 
-Plugin versions and install targets are tracked in [plugins/manifest.csv](plugins/manifest.csv).
+Plugin versions and install targets are primarily tracked in [config/console/plugins.json](config/console/plugins.json).
 
 - Automated downloads are copied directly into the mounted core runtime plugin folders.
 - Manual-source plugins go in `plugins/manual/`.
+- `plugins/manifest.csv` remains as a legacy compatibility export for the existing plugin list.
 - Use [docs/plugin-management.md](docs/plugin-management.md) for the workflow and current defaults.
 
 ## LuckPerms and closed-beta roles
 
-This repo renders LuckPerms onto the proxy and all Paper backends with shared MariaDB storage.
+This repo renders LuckPerms onto the proxy and all Paper backends with shared MariaDB storage, then reconciles groups and player assignments from the tracked console state.
 
 Bootstrap hierarchy:
 
@@ -94,7 +121,7 @@ Bootstrap hierarchy:
 - `mod -> member`
 - `admin -> mod`
 
-Use [docs/permissions-bootstrap.md](docs/permissions-bootstrap.md) for the default nodes and optional initial assignments.
+Use [docs/permissions-bootstrap.md](docs/permissions-bootstrap.md) for the default nodes, reconcile flow, and optional initial assignments.
 
 ## Backups and whitelist state
 
@@ -120,14 +147,23 @@ Useful commands:
 
 ```bash
 docker compose up -d --build
+docker compose logs -f console
+docker compose logs -f console-worker
 docker compose logs -f olivetin
 ./scripts/validate-target.sh
 ./scripts/sync-plugins.sh
 ./scripts/render-luckperms-config.sh
-./scripts/bootstrap-permissions.sh
+./scripts/reconcile-permissions.sh
 ./scripts/stage-admin-state.sh
 ./scripts/run-backup-now.sh
 ```
+
+Safe-now posture:
+
+- stay Paper-first and multi-backend for the immediate phase
+- no custom resource packs, custom items, custom models, or voice features
+- add only datapacks listed in `config/console/datapacks.json`
+- treat Bedrock-risk flags in the console as rollout blockers until verified in staging
 
 OliveTin actions included by default:
 

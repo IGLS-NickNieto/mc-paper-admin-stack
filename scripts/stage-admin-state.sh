@@ -25,6 +25,11 @@ admin_compose exec -T mariadb mariadb-dump \
 cp "${ROOT_DIR}/plugins/manifest.csv" "${OUT_DIR}/plugins-manifest.csv"
 cp "${ROOT_DIR}/docs/permissions-bootstrap.md" "${OUT_DIR}/permissions-bootstrap.md"
 cp "${ROOT_DIR}/docs/plugin-management.md" "${OUT_DIR}/plugin-management.md"
+cp -R "${ROOT_DIR}/config/console" "${OUT_DIR}/console-state"
+
+if [[ -f "${ROOT_DIR}/data/console/console.db" ]]; then
+  cp "${ROOT_DIR}/data/console/console.db" "${OUT_DIR}/console.db"
+fi
 
 if [[ -d "${TARGET_DATA_DIR}/proxy/plugins/luckperms" ]]; then
   ensure_directory "${OUT_DIR}/proxy-luckperms"

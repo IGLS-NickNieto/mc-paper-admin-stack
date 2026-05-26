@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Servers</span>
+    <h2>Profile-based server control with draftable world and settings changes.</h2>
+  </div>
+</header>
+<section class="stack">
+  {% for profile_name, profile in state.servers.profiles.items() %}
+  <form method="post" action="/servers/{{ profile_name }}" class="card stack">
+    <h3>{{ profile_name|capitalize }}</h3>
+    <div class="grid two">
+      <label>Display Name<input type="text" name="display_name" value="{{ profile.display_name }}" /></label>
+      <label>Assigned World
+        <select name="assigned_world_id">
+          {% for world in state.worlds.worlds %}
+          <option value="{{ world.world_id }}" {{ 'selected' if world.world_id == profile.assigned_world_id else '' }}>{{ world.display_name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="grid four">
+      <label>Gamemode<input type="text" name="gamemode" value="{{ profile.settings['gamemode'] }}" /></label>
+      <label>Difficulty<input type="text" name="difficulty" value="{{ profile.settings['difficulty'] }}" /></label>
+      <label>Max Players<input type="number" name="max_players" value="{{ profile.settings['max-players'] }}" /></label>
+      <label>Whitelist Mode<input type="text" name="whitelist_mode" value="{{ profile.whitelist_mode }}" /></label>
+    </div>
+    <div class="grid four">
+      <label>View Distance<input type="number" name="view_distance" value="{{ profile.settings['view-distance'] }}" /></label>
+      <label>Simulation Distance<input type="number" name="simulation_distance" value="{{ profile.settings['simulation-distance'] }}" /></label>
+      <label>PVP
+        <select name="pvp"><option value="true" {{ 'selected' if profile.settings['pvp'] else '' }}>true</option><option value="false" {{ 'selected' if not profile.settings['pvp'] else '' }}>false</option></select>
+      </label>
+      <label>Force Gamemode
+        <select name="force_gamemode"><option value="true" {{ 'selected' if profile.settings['force-gamemode'] else '' }}>true</option><option value="false" {{ 'selected' if not profile.settings['force-gamemode'] else '' }}>false</option></select>
+      </label>
+    </div>
+    <div class="grid three">
+      <label>Allow Nether
+        <select name="allow_nether"><option value="true" {{ 'selected' if profile.settings['allow-nether'] else '' }}>true</option><option value="false" {{ 'selected' if not profile.settings['allow-nether'] else '' }}>false</option></select>
+      </label>
+      <label>Allow Flight
+        <select name="allow_flight"><option value="true" {{ 'selected' if profile.settings['allow-flight'] else '' }}>true</option><option value="false" {{ 'selected' if not profile.settings['allow-flight'] else '' }}>false</option></select>
+      </label>
+      <label>Plugin Bundles
+        <select name="plugin_bundles" multiple size="4">
+          {% for bundle_name in state.plugins.bundles.keys() %}
+          <option value="{{ bundle_name }}" {{ 'selected' if bundle_name in profile.plugin_bundles else '' }}>{{ bundle_name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="grid four">
+      <label>World Border Enabled
+        <select name="world_border_enabled"><option value="true" {{ 'selected' if profile.world_border.enabled else '' }}>true</option><option value="false" {{ 'selected' if not profile.world_border.enabled else '' }}>false</option></select>
+      </label>
+      <label>World Border Radius<input type="number" name="world_border_radius" value="{{ profile.world_border.radius_blocks }}" /></label>
+      <label>Pregeneration State<input type="text" name="pregeneration_state" value="{{ profile.pregeneration_status.state }}" /></label>
+      <label>Pregeneration Last Run<input type="text" name="pregeneration_last_run_at" value="{{ profile.pregeneration_status.last_run_at }}" /></label>
+    </div>
+    <label>Pregeneration Notes<textarea name="pregeneration_notes" rows="3">{{ profile.pregeneration_status.notes }}</textarea></label>
+    <label>Maintenance Window<input type="text" name="maintenance_window" value="{{ profile.maintenance_window }}" /></label>
+    <label>Cleanup Notes<textarea name="cleanup_notes" rows="3">{{ profile.cleanup_notes }}</textarea></label>
+    <button type="submit">Save Draft</button>
+  </form>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,94 @@
+{
+  "profiles": {
+    "creative": {
+      "assigned_world_id": "creative-plots",
+      "cleanup_notes": "Watch armor stands, item frames, and plot junk accumulation.",
+      "display_name": "Creative",
+      "maintenance_window": "Tuesday 03:00-04:00 America/New_York",
+      "plugin_bundles": [
+        "creative-default"
+      ],
+      "pregeneration_status": {
+        "last_run_at": "",
+        "notes": "Pregenerate the plots world after world border approval.",
+        "state": "planned"
+      },
+      "settings": {
+        "allow-flight": true,
+        "allow-nether": false,
+        "difficulty": "peaceful",
+        "force-gamemode": true,
+        "gamemode": "creative",
+        "max-players": 20,
+        "pvp": false,
+        "simulation-distance": 6,
+        "view-distance": 8
+      },
+      "whitelist_mode": "invite-only",
+      "world_border": {
+        "enabled": true,
+        "radius_blocks": 8000
+      }
+    },
+    "lobby": {
+      "assigned_world_id": "lobby-hub",
+      "cleanup_notes": "Keep lobby entity counts low and avoid decorative lag sources.",
+      "display_name": "Lobby",
+      "maintenance_window": "Tuesday 03:00-04:00 America/New_York",
+      "plugin_bundles": [
+        "lobby-default"
+      ],
+      "pregeneration_status": {
+        "last_run_at": "",
+        "notes": "Create a small protected lobby footprint only after backups pass.",
+        "state": "planned"
+      },
+      "settings": {
+        "allow-flight": true,
+        "allow-nether": false,
+        "difficulty": "peaceful",
+        "force-gamemode": true,
+        "gamemode": "adventure",
+        "max-players": 20,
+        "pvp": false,
+        "simulation-distance": 4,
+        "view-distance": 6
+      },
+      "whitelist_mode": "invite-only",
+      "world_border": {
+        "enabled": true,
+        "radius_blocks": 2000
+      }
+    },
+    "survival": {
+      "assigned_world_id": "survival-main",
+      "cleanup_notes": "Prune unused chunks only from restored copies first.",
+      "display_name": "Survival",
+      "maintenance_window": "Tuesday 03:00-04:00 America/New_York",
+      "plugin_bundles": [
+        "survival-default"
+      ],
+      "pregeneration_status": {
+        "last_run_at": "",
+        "notes": "Run Chunky after the baseline Bedrock path is stable.",
+        "state": "planned"
+      },
+      "settings": {
+        "allow-flight": false,
+        "allow-nether": true,
+        "difficulty": "hard",
+        "force-gamemode": false,
+        "gamemode": "survival",
+        "max-players": 20,
+        "pvp": true,
+        "simulation-distance": 6,
+        "view-distance": 8
+      },
+      "whitelist_mode": "invite-only",
+      "world_border": {
+        "enabled": true,
+        "radius_blocks": 12000
+      }
+    }
+  }
+}

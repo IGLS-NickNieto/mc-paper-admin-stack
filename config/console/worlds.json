@@ -1,0 +1,37 @@
+{
+  "worlds": [
+    {
+      "artifact_path": "world-library/creative-plots.zip",
+      "checksum": "",
+      "compatibility_tags": [
+        "creative"
+      ],
+      "display_name": "Creative Plots",
+      "notes": "Creative plots world.",
+      "source_kind": "archive",
+      "world_id": "creative-plots"
+    },
+    {
+      "artifact_path": "world-library/lobby-hub.zip",
+      "checksum": "",
+      "compatibility_tags": [
+        "lobby"
+      ],
+      "display_name": "Main Lobby Hub",
+      "notes": "Protected spawn hub world.",
+      "source_kind": "archive",
+      "world_id": "lobby-hub"
+    },
+    {
+      "artifact_path": "world-library/survival-main.zip",
+      "checksum": "",
+      "compatibility_tags": [
+        "survival"
+      ],
+      "display_name": "Main Survival World",
+      "notes": "Primary survival world.",
+      "source_kind": "archive",
+      "world_id": "survival-main"
+    }
+  ]
+}

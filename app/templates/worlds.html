@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Worlds</span>
+    <h2>Import world archives into the library and assign them to fixed server profiles.</h2>
+  </div>
+</header>
+<section class="grid two">
+  <form method="post" action="/worlds/import" enctype="multipart/form-data" class="card stack">
+    <h3>Import World Archive</h3>
+    <label>World ID<input type="text" name="world_id" required /></label>
+    <label>Display Name<input type="text" name="display_name" required /></label>
+    <label>Notes<textarea name="notes" rows="4"></textarea></label>
+    <label>Archive<input type="file" name="archive" required /></label>
+    <button type="submit">Import</button>
+  </form>
+  <article class="card">
+    <h3>Catalog</h3>
+    {% for world in state.worlds.worlds %}
+    <div class="item">
+      <strong>{{ world.display_name }}</strong>
+      <div class="muted">{{ world.world_id }} | {{ world.artifact_path }}</div>
+      <div class="muted">{{ world.notes }}</div>
+    </div>
+    {% endfor %}
+  </article>
+</section>
+{% endblock %}

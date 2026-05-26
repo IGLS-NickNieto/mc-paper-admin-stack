@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Perks</span>
+    <h2>Keep LuckPerms role hierarchy in repo state and reconcile it through the console.</h2>
+  </div>
+</header>
+<section class="grid two">
+  <article class="stack">
+    {% for group_name, group in state.perks.groups.items() %}
+    <form method="post" action="/perks/group/{{ group_name }}" class="card stack">
+      <h3>{{ group_name }}</h3>
+      <div class="muted">inherits {{ group.inherits|join(', ') if group.inherits else 'none' }}</div>
+      <textarea name="permissions" rows="8">{{ group.permissions|join('\n') }}</textarea>
+      <button type="submit">Save Group Permissions</button>
+    </form>
+    {% endfor %}
+  </article>
+  <article class="stack">
+    <form method="post" action="/perks/bundle" class="card stack">
+      <h3>Add or Update Perk Bundle</h3>
+      <label>Bundle Name<input type="text" name="bundle_name" required /></label>
+      <label>Description<input type="text" name="description" /></label>
+      <label>Permissions<textarea name="permissions" rows="8"></textarea></label>
+      <button type="submit">Save Bundle</button>
+    </form>
+    <article class="card">
+      <h3>Existing Bundles</h3>
+      {% for bundle_name, bundle in state.perks.perk_bundles.items() %}
+      <div class="item">
+        <strong>{{ bundle_name }}</strong>
+        <div class="muted">{{ bundle.description }}</div>
+      </div>
+      {% endfor %}
+    </article>
+  </article>
+</section>
+{% endblock %}

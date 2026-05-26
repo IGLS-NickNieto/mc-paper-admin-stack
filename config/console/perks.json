@@ -1,0 +1,76 @@
+{
+  "groups": {
+    "admin": {
+      "inherits": [
+        "mod"
+      ],
+      "permissions": [
+        "luckperms.*",
+        "essentials.*",
+        "worldedit.*",
+        "worldguard.*",
+        "openinv.*"
+      ],
+      "prefix": "[Admin] ",
+      "weight": 40
+    },
+    "guest": {
+      "inherits": [],
+      "permissions": [
+        "essentials.msg",
+        "essentials.reply",
+        "essentials.rules",
+        "essentials.motd",
+        "essentials.list",
+        "essentials.spawn",
+        "essentials.home",
+        "essentials.sethome",
+        "essentials.delhome",
+        "quickconnect.server.lobby",
+        "quickconnect.server.survival",
+        "quickconnect.server.creative"
+      ],
+      "prefix": "[Guest] ",
+      "weight": 10
+    },
+    "member": {
+      "inherits": [
+        "guest"
+      ],
+      "permissions": [
+        "essentials.back",
+        "essentials.tpa",
+        "essentials.tpaccept",
+        "essentials.tpdeny",
+        "essentials.sethome.multiple.member"
+      ],
+      "prefix": "[Member] ",
+      "weight": 20
+    },
+    "mod": {
+      "inherits": [
+        "member"
+      ],
+      "permissions": [
+        "essentials.invsee",
+        "essentials.kick",
+        "essentials.mute",
+        "essentials.tempban",
+        "essentials.unban",
+        "essentials.socialspy",
+        "openinv.openinv"
+      ],
+      "prefix": "[Mod] ",
+      "weight": 30
+    }
+  },
+  "perk_bundles": {
+    "builder": {
+      "description": "Lightweight build utility perks.",
+      "permissions": [
+        "worldedit.selection.pos",
+        "worldedit.selection.hpos"
+      ]
+    }
+  }
+}

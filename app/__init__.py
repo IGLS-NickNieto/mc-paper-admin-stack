@@ -1,0 +1,1 @@
+"""Minecraft admin console package."""

@@ -8,7 +8,13 @@ source "${SCRIPT_DIR}/lib/common.sh"
 load_admin_env
 ensure_command docker
 
+if [[ -z "${BACKUP_COMPANION_ROOT:-}" ]]; then
+  BACKUP_COMPANION_ROOT="$(cd "${SCRIPT_DIR}/../../mc-backup-google-drive" 2>/dev/null && pwd || true)"
+  export BACKUP_COMPANION_ROOT
+fi
+
 require_envs \
+  BACKUP_COMPANION_ROOT \
   TARGET_STACK_ROOT \
   TARGET_COMPOSE_PROJECT_DIR \
   TARGET_COMPOSE_FILE \
@@ -24,6 +30,7 @@ require_envs \
   TARGET_CREATIVE_CONTAINER
 
 for path_name in \
+  BACKUP_COMPANION_ROOT \
   TARGET_STACK_ROOT \
   TARGET_COMPOSE_PROJECT_DIR \
   TARGET_DATA_DIR \
@@ -59,6 +66,17 @@ for container_name in \
   TARGET_CREATIVE_CONTAINER; do
   if ! docker container inspect "${!container_name}" >/dev/null 2>&1; then
     printf 'Target container not found: %s=%s\n' "${container_name}" "${!container_name}" >&2
+    exit 1
+  fi
+done
+
+for backup_file in \
+  "${BACKUP_COMPANION_ROOT}/scripts/offsite-backup.sh" \
+  "${BACKUP_COMPANION_ROOT}/scripts/backup-verify.sh" \
+  "${BACKUP_COMPANION_ROOT}/scripts/restore-to-staging.sh" \
+  "${BACKUP_COMPANION_ROOT}/scripts/promote-rollback.sh"; do
+  if [[ ! -f "${backup_file}" ]]; then
+    printf 'Expected backup companion file not found: %s\n' "${backup_file}" >&2
     exit 1
   fi
 done

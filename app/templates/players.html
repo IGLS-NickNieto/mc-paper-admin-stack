@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Players</span>
+    <h2>Manage whitelist access, role assignments, and notes for your staff and beta players.</h2>
+  </div>
+</header>
+<section class="grid two">
+  <form method="post" action="/players" class="card stack">
+    <h3>Add or Update Player</h3>
+    <label>Player Name<input type="text" name="player_name" required /></label>
+    <label>Role
+      <select name="role">
+        {% for group_name in state.perks.groups.keys() %}
+        <option value="{{ group_name }}">{{ group_name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Perks (comma-separated)<input type="text" name="perks" /></label>
+    <label>Notes<textarea name="notes" rows="4"></textarea></label>
+    <label>Whitelist
+      <select name="whitelisted">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    </label>
+    <button type="submit">Save Player</button>
+  </form>
+  <article class="card">
+    <h3>Managed Players</h3>
+    {% for player in state.players.players %}
+    <div class="item">
+      <strong>{{ player.player_name }}</strong>
+      <div class="muted">{{ player.roles|join(', ') }} | whitelist {{ player.whitelisted }}</div>
+      <div class="muted">{{ player.notes }}</div>
+    </div>
+    {% endfor %}
+  </article>
+</section>
+{% endblock %}

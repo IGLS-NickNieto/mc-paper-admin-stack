@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Control Plane</span>
+    <h2>Unified console for worlds, players, plugins, perks, and recovery.</h2>
+  </div>
+  <form method="post" action="/apply">
+    <button type="submit">Apply Draft State</button>
+  </form>
+</header>
+
+<section class="grid two">
+  <article class="card">
+    <h3>Server Health</h3>
+    {% for name, profile in status.get("profiles", {}).items() %}
+    <div class="item">
+      <strong>{{ name }}</strong>
+      <div class="muted">{{ profile.get("container_status", "unknown") }} | world {{ profile.get("level_name", "n/a") }}</div>
+      {% if profile.get("bedrock_path") %}
+      <div class="muted">Bedrock: packs {{ 'empty' if profile.get("bedrock_path", {}).get("packs_empty") else 'needs review' }} | resource packs {{ profile.get("bedrock_path", {}).get("force_resource_packs") }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </article>
+  <article class="card">
+    <h3>Snapshot Coverage</h3>
+    <div class="metric">{{ snapshots.get("snapshot_count", 0) }} offsite snapshots</div>
+    <div class="muted">{{ snapshots.get("local_archives", [])|length }} local archives ready</div>
+    <div class="muted">Latest local backup age: {{ snapshots.get("latest_local_archive_age_hours", "n/a") }} hours</div>
+  </article>
+</section>
+
+<section class="grid three">
+  <article class="card">
+    <h3>World Library</h3>
+    <div class="metric">{{ state.worlds.worlds|length }}</div>
+    <div class="muted">Tracked world assets</div>
+  </article>
+  <article class="card">
+    <h3>Player Access</h3>
+    <div class="metric">{{ state.players.players|length }}</div>
+    <div class="muted">Managed player records</div>
+  </article>
+  <article class="card">
+    <h3>Perk Bundles</h3>
+    <div class="metric">{{ state.perks.perk_bundles|length }}</div>
+    <div class="muted">Role and perk definitions</div>
+  </article>
+</section>
+
+<section class="grid two">
+  <article class="card">
+    <h3>Cleanup and Growth</h3>
+    <div class="item">
+      <strong>Data footprint</strong>
+      <div class="muted">{{ disk.get("target_data_dir_size_bytes", 0) }} bytes under {{ disk.get("target_data_dir") }}</div>
+    </div>
+    <div class="item">
+      <strong>Backups footprint</strong>
+      <div class="muted">{{ disk.get("target_backups_dir_size_bytes", 0) }} bytes under {{ disk.get("target_backups_dir") }}</div>
+    </div>
+    <div class="item">
+      <strong>Maintenance window</strong>
+      <div class="muted">{{ state.policy.cleanup_policy.maintenance_window }}</div>
+    </div>
+  </article>
+  <article class="card">
+    <h3>Feature Posture</h3>
+    <div class="item">
+      <strong>Approved now</strong>
+      <div class="muted">{{ state.policy.approved_features_now|length }} items</div>
+    </div>
+    <div class="item">
+      <strong>Delayed features</strong>
+      <div class="muted">{{ state.policy.delayed_features|length }} items</div>
+    </div>
+    <div class="item">
+      <strong>Safe datapacks</strong>
+      <div class="muted">{{ state.datapacks.safe_now|length }} tracked allowlist entries</div>
+    </div>
+  </article>
+</section>
+{% endblock %}

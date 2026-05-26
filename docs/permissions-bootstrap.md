@@ -3,8 +3,16 @@
 Bootstrap command:
 
 ```bash
+./scripts/reconcile-permissions.sh
+```
+
+Compatibility wrapper:
+
+```bash
 ./scripts/bootstrap-permissions.sh
 ```
+
+Both commands now reconcile the tracked desired state instead of applying a one-time hard-coded bootstrap only.
 
 ## Group model
 
@@ -48,3 +56,5 @@ Set any of these in `.env` before running the bootstrap:
 - `LP_BOOTSTRAP_ADMIN_PLAYERS`
 
 Each accepts a comma-separated player list.
+
+These env-based bootstrap players are merged into the tracked player state during reconcile so first-run admin access still works before the UI is fully populated.

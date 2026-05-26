@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Backups</span>
+    <h2>Run local and offsite backups, stage restores, verify recovery, and promote rollback from one place.</h2>
+  </div>
+</header>
+<section class="grid three">
+  <form method="post" action="/backups/local" class="card stack"><h3>Local Backup</h3><button type="submit">Run Now</button></form>
+  <form method="post" action="/backups/offsite" class="card stack"><h3>Offsite Snapshot</h3><button type="submit">Run Now</button></form>
+  <form method="post" action="/backups/verify" class="card stack"><h3>Verify Restores</h3><button type="submit">Run Verify</button></form>
+</section>
+<section class="grid two">
+  <form method="post" action="/backups/restore" class="card stack">
+    <h3>Stage Restore</h3>
+    <label>Source Ref<input type="text" name="source_ref" value="latest" /></label>
+    <label>Scope<input type="text" name="scope" value="survival" /></label>
+    <button type="submit">Stage Restore</button>
+  </form>
+  <form method="post" action="/backups/promote" class="card stack">
+    <h3>Promote Rollback</h3>
+    <label>Stage Path<input type="text" name="stage_path" placeholder="staging/restore-..." /></label>
+    <label>Scope<input type="text" name="scope" value="survival" /></label>
+    <label>Allow Playerdata Rollback
+      <select name="allow_playerdata_rollback">
+        <option value="false">false</option>
+        <option value="true">true</option>
+      </select>
+    </label>
+    <button type="submit">Promote</button>
+  </form>
+</section>
+<section class="card">
+  <h3>Local Archives</h3>
+  <div class="muted">Freshness target: {{ state.policy.observability.backup_freshness_target_hours }} hours</div>
+  <div class="muted">Latest local backup age: {{ snapshots.get("latest_local_archive_age_hours", "n/a") }} hours</div>
+  {% for archive in snapshots.get("local_archives", []) %}
+  <div class="item">
+    <strong>{{ archive.name }}</strong>
+    <div class="muted">{{ archive.modified_at }} | {{ archive.size_bytes }} bytes</div>
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ console_title }}</title>
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="eyebrow">Minecraft</span>
+          <h1>{{ console_title }}</h1>
+        </div>
+        <nav class="nav">
+          <a href="/" class="{{ 'active' if section == 'dashboard' else '' }}">Dashboard</a>
+          <a href="/servers" class="{{ 'active' if section == 'servers' else '' }}">Servers</a>
+          <a href="/worlds" class="{{ 'active' if section == 'worlds' else '' }}">Worlds</a>
+          <a href="/players" class="{{ 'active' if section == 'players' else '' }}">Players</a>
+          <a href="/plugins" class="{{ 'active' if section == 'plugins' else '' }}">Plugins</a>
+          <a href="/policies" class="{{ 'active' if section == 'policies' else '' }}">Policies</a>
+          <a href="/perks" class="{{ 'active' if section == 'perks' else '' }}">Perks</a>
+          <a href="/backups" class="{{ 'active' if section == 'backups' else '' }}">Backups</a>
+          <a href="/operations" class="{{ 'active' if section == 'operations' else '' }}">Operations</a>
+        </nav>
+        {% if user %}
+        <div class="user-panel">
+          <div>{{ user.username }}</div>
+          <div class="muted">{{ user.role }}</div>
+          <form method="post" action="/logout">
+            <button type="submit" class="ghost">Sign out</button>
+          </form>
+        </div>
+        {% endif %}
+      </aside>
+      <main class="content">
+        {% block content %}{% endblock %}
+      </main>
+      <aside class="rail">
+        <section class="card">
+          <h3>Recent Jobs</h3>
+          {% for job in jobs %}
+          <div class="item">
+            <strong>#{{ job["id"] }}</strong> {{ job["job_type"] }}
+            <div class="muted">{{ job["status"] }} by {{ job["created_by"] }}</div>
+          </div>
+          {% else %}
+          <div class="muted">No queued work yet.</div>
+          {% endfor %}
+        </section>
+        <section class="card">
+          <h3>Audit Trail</h3>
+          {% for log in audit_logs %}
+          <div class="item">
+            <strong>{{ log["actor"] }}</strong> {{ log["action"] }}
+            <div class="muted">{{ log["created_at"] }}</div>
+          </div>
+          {% else %}
+          <div class="muted">No audit entries yet.</div>
+          {% endfor %}
+        </section>
+      </aside>
+    </div>
+  </body>
+</html>

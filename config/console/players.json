@@ -1,0 +1,15 @@
+{
+  "players": [
+    {
+      "notes": "Seed record for the console.",
+      "perks": [
+        "builder"
+      ],
+      "player_name": "ExamplePlayer",
+      "roles": [
+        "member"
+      ],
+      "whitelisted": true
+    }
+  ]
+}

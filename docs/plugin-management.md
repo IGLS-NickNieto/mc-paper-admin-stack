@@ -2,7 +2,20 @@
 
 Operational plugin ownership lives in this repo.
 
-## Manifest format
+## Primary source of truth
+
+Tracked control-plane file: [`config/console/plugins.json`](../config/console/plugins.json)
+
+This file now owns:
+
+- plugin catalog entries
+- reusable plugin bundles
+- the inputs the console uses to assign bundles per profile
+- Bedrock-risk and rollout-phase metadata for safe-now vs later decisions
+
+`scripts/sync-plugins.sh` reads the new state model directly, or an explicit generated plan via `--plan`.
+
+## Legacy manifest format
 
 Tracked file: [`plugins/manifest.csv`](../plugins/manifest.csv)
 
@@ -36,6 +49,8 @@ Columns:
 ## Workflow
 
 1. Place any required manual jars into `plugins/manual/`.
-2. Run `./scripts/sync-plugins.sh`.
-3. Run `./scripts/render-luckperms-config.sh`.
-4. Restart the affected core containers, or use OliveTin `Reapply Plugins and Configs`.
+2. Update plugin catalog entries or bundle assignments in `config/console/plugins.json` and `config/console/servers.json`.
+3. Run `./scripts/sync-plugins.sh`.
+4. Run `./scripts/render-luckperms-config.sh`.
+5. Reconcile permissions if the plugin change affects role capabilities.
+6. Restart the affected core containers, or use the console/OliveTin `Reapply Plugins and Configs`.

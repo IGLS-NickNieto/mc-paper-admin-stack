@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Policies</span>
+    <h2>Track safe-now features, Bedrock risk, cleanup rules, and datapack posture before expanding gameplay.</h2>
+  </div>
+</header>
+<section class="grid two">
+  <form method="post" action="/policies" class="card stack">
+    <h3>Stability Policy</h3>
+    <label>Approved Features Now<textarea name="approved_features_now" rows="8">{{ state.policy.approved_features_now|join('\n') }}</textarea></label>
+    <label>Delayed Features<textarea name="delayed_features" rows="8">{{ state.policy.delayed_features|join('\n') }}</textarea></label>
+    <label>Maintenance Window<input type="text" name="maintenance_window" value="{{ state.policy.cleanup_policy.maintenance_window }}" /></label>
+    <label>Entity and Lag Limits<textarea name="entity_limits" rows="6">{{ state.policy.cleanup_policy.entity_farm_limits|join('\n') }}</textarea></label>
+    <div class="grid three">
+      <label>Log Retention Days<input type="number" name="log_retention_days" value="{{ state.policy.cleanup_policy.log_retention_days }}" /></label>
+      <label>Spark Retention Days<input type="number" name="spark_report_retention_days" value="{{ state.policy.cleanup_policy.spark_report_retention_days }}" /></label>
+      <label>Crash Retention Days<input type="number" name="crash_report_retention_days" value="{{ state.policy.cleanup_policy.crash_report_retention_days }}" /></label>
+    </div>
+    <div class="grid three">
+      <label>Data Warn %<input type="number" name="data_warn_percent" value="{{ state.policy.cleanup_policy.disk_growth_signals.data_dir_warn_percent }}" /></label>
+      <label>Backups Warn %<input type="number" name="backups_warn_percent" value="{{ state.policy.cleanup_policy.disk_growth_signals.backups_dir_warn_percent }}" /></label>
+      <label>Suspicious Growth GB<input type="number" name="suspicious_growth_gb" value="{{ state.policy.cleanup_policy.disk_growth_signals.suspicious_growth_gb }}" /></label>
+    </div>
+    <label>Backup Freshness Target Hours<input type="number" name="backup_freshness_target_hours" value="{{ state.policy.observability.backup_freshness_target_hours }}" /></label>
+    <label>Alerts<textarea name="alerts" rows="8">{{ state.policy.observability.alerts|join('\n') }}</textarea></label>
+    <button type="submit">Save Policy</button>
+  </form>
+  <form method="post" action="/datapacks" class="card stack">
+    <h3>Datapack Allowlist</h3>
+    <p class="muted">Format: `Name | risk | notes`</p>
+    <label>Safe Now<textarea name="safe_now" rows="12">{% for item in state.datapacks.safe_now %}{{ item.name }} | {{ item.bedrock_risk_level }} | {{ item.notes }}
+{% endfor %}</textarea></label>
+    <label>Delayed<textarea name="delayed" rows="8">{% for item in state.datapacks.delayed %}{{ item.name }} | {{ item.bedrock_risk_level }} | {{ item.notes }}
+{% endfor %}</textarea></label>
+    <button type="submit">Save Datapacks</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Plugins</span>
+    <h2>Bundle plugins by profile so draft changes can be reviewed and applied safely.</h2>
+  </div>
+</header>
+<section class="grid two">
+  <article class="card">
+    <h3>Catalog</h3>
+    {% for plugin in state.plugins.catalog %}
+    <div class="item">
+      <strong>{{ plugin.plugin_id }}</strong>
+      <div class="muted">{{ plugin.version }} | {{ plugin.install_target }} | risk {{ plugin.get("bedrock_risk_level", "unknown") }}</div>
+      <div class="muted">{{ plugin.get("rollout_phase", "unspecified") }} | owner {{ plugin.get("owner", "unknown") }}</div>
+      <div class="muted">{{ plugin.description }}</div>
+    </div>
+    {% endfor %}
+  </article>
+  <article class="stack">
+    {% for profile_name, profile in state.servers.profiles.items() %}
+    <form method="post" action="/plugins/{{ profile_name }}" class="card stack">
+      <h3>{{ profile_name|capitalize }} Bundles</h3>
+      <select name="plugin_bundles" multiple size="5">
+        {% for bundle_name in state.plugins.bundles.keys() %}
+        <option value="{{ bundle_name }}" {{ 'selected' if bundle_name in profile.plugin_bundles else '' }}>{{ bundle_name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Save Bundles</button>
+    </form>
+    {% endfor %}
+  </article>
+</section>
+{% endblock %}

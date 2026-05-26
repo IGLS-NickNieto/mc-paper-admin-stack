@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="hero">
+  <div>
+    <span class="eyebrow">Operations</span>
+    <h2>Fallback operational actions still exist, but now they’re visible from the main console.</h2>
+  </div>
+</header>
+<section class="grid three">
+  {% for action in ['restart_proxy', 'restart_lobby', 'restart_survival', 'restart_creative', 'restart_all_core', 'sync_whitelist', 'stage_admin_state', 'reapply_plugins_and_configs'] %}
+  <form method="post" action="/operations/{{ action }}" class="card stack">
+    <h3>{{ action }}</h3>
+    <button type="submit">Queue Action</button>
+  </form>
+  {% endfor %}
+</section>
+<section class="card">
+  <h3>Runtime Status</h3>
+  <div class="item">
+    <strong>Forwarding and Bedrock</strong>
+    <div class="muted">mode {{ status.get("checks", {}).get("velocity_forwarding_mode", "unknown") }} | packs empty {{ status.get("checks", {}).get("geyser_packs_empty", "unknown") }} | Floodgate key {{ status.get("checks", {}).get("floodgate_key_exists", "unknown") }}</div>
+  </div>
+  <div class="item">
+    <strong>Exposure</strong>
+    <div class="muted">Java TCP {{ status.get("checks", {}).get("java_tcp_port", "n/a") }} | Bedrock UDP {{ status.get("checks", {}).get("bedrock_udp_port", "n/a") }} | backend public {{ status.get("checks", {}).get("backend_direct_exposure", "unknown") }}</div>
+  </div>
+  {% for profile_name, profile in status.get("profiles", {}).items() %}
+  <div class="item">
+    <strong>{{ profile_name }}</strong>
+    <div class="muted">{{ profile.get("container_status", "unknown") }} | {{ profile.get("gamemode", "n/a") }} | {{ profile.get("difficulty", "n/a") }}</div>
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}

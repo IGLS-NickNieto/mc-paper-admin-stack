@@ -1,0 +1,172 @@
+{
+  "bundles": {
+    "creative-default": [
+      "luckperms_paper",
+      "essentialsx",
+      "openinv"
+    ],
+    "lobby-default": [
+      "luckperms_paper",
+      "essentialsx",
+      "essentialsx_spawn",
+      "worldedit",
+      "worldguard",
+      "quickconnect",
+      "openinv"
+    ],
+    "proxy-default": [
+      "luckperms_velocity",
+      "exohub"
+    ],
+    "survival-default": [
+      "luckperms_paper",
+      "essentialsx",
+      "openinv"
+    ]
+  },
+  "catalog": [
+    {
+      "bedrock_risk_level": "safe",
+      "description": "LuckPerms on Velocity.",
+      "file_name": "LuckPerms-Velocity-5.5.42.jar",
+      "install_target": "proxy",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "luckperms_velocity",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://luckperms.net/download",
+      "version": "5.5.42"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Velocity /hub support.",
+      "file_name": "ExoHub-1.0.0.jar",
+      "install_target": "proxy",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "exohub",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://modrinth.com/plugin/exohub",
+      "version": "1.0.0"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "LuckPerms on Paper backends.",
+      "file_name": "LuckPerms-Bukkit-5.5.42.jar",
+      "install_target": "all-paper",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "luckperms_paper",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://luckperms.net/download",
+      "version": "5.5.42"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Core utility commands.",
+      "file_name": "EssentialsX-2.21.2.jar",
+      "install_target": "all-paper",
+      "manual_source": false,
+      "owner": "admin-stack",
+      "plugin_id": "essentialsx",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://repo.essentialsx.net/releases/net/essentialsx/EssentialsX/2.21.2/EssentialsX-2.21.2.jar",
+      "version": "2.21.2"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Lobby spawn management.",
+      "file_name": "EssentialsXSpawn-2.21.2.jar",
+      "install_target": "lobby",
+      "manual_source": false,
+      "owner": "admin-stack",
+      "plugin_id": "essentialsx_spawn",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://repo.essentialsx.net/releases/net/essentialsx/EssentialsXSpawn/2.21.2/EssentialsXSpawn-2.21.2.jar",
+      "version": "2.21.2"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "World editing for lobby staff.",
+      "file_name": "worldedit-bukkit.jar",
+      "install_target": "lobby",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "worldedit",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://worldedit.enginehub.org/en/latest/install/",
+      "version": "7.4"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Lobby protection regions.",
+      "file_name": "worldguard-bukkit.jar",
+      "install_target": "lobby",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "worldguard",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://worldguard.enginehub.org/en/latest/install/",
+      "version": "7.0"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Server selector UI.",
+      "file_name": "QuickConnect-1.0.2.jar",
+      "install_target": "lobby",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "quickconnect",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://modrinth.com/plugin/quickconnect-utility/version/wMX1NaWC",
+      "version": "1.0.2"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Staff inventory access.",
+      "file_name": "OpenInv-0.4.0.jar",
+      "install_target": "all-paper",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "openinv",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://www.spigotmc.org/threads/open-inventory.715860/",
+      "version": "0.4.0"
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "description": "Performance profiling and MSPT/TPS diagnostics.",
+      "file_name": "spark-paper.jar",
+      "install_target": "all-paper",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "spark",
+      "rollout_phase": "approved-now",
+      "sha256": "",
+      "source_url": "https://spark.lucko.me/download",
+      "version": "recommended-manual"
+    },
+    {
+      "bedrock_risk_level": "medium",
+      "description": "Map rendering. Delay until cleanup and storage policy are proven.",
+      "file_name": "BlueMap.jar",
+      "install_target": "all-paper",
+      "manual_source": true,
+      "owner": "admin-stack",
+      "plugin_id": "bluemap",
+      "rollout_phase": "optional-later",
+      "sha256": "",
+      "source_url": "https://bluemap.bluecolored.de/",
+      "version": "recommended-manual"
+    }
+  ]
+}

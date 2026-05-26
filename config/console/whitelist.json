@@ -1,0 +1,9 @@
+{
+  "entries": [
+    {
+      "note": "Initial beta player.",
+      "player_name": "ExamplePlayer"
+    }
+  ],
+  "mode": "invite-only"
+}

@@ -1,4 +1,97 @@
 services:
+  console:
+    build:
+      context: .
+      dockerfile: images/console/Dockerfile
+    image: ${CONSOLE_IMAGE:-mc-paper-admin-console:2026.05.26}
+    container_name: mc-admin-console
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      CONSOLE_ADMIN_USER: ${CONSOLE_ADMIN_USER:-admin}
+      CONSOLE_ADMIN_PASSWORD: ${CONSOLE_ADMIN_PASSWORD:-change-me-console-admin}
+      CONSOLE_MOD_USER: ${CONSOLE_MOD_USER:-mod}
+      CONSOLE_MOD_PASSWORD: ${CONSOLE_MOD_PASSWORD:-change-me-console-mod}
+      CONSOLE_SESSION_SECRET: ${CONSOLE_SESSION_SECRET:-change-me-console-session-secret}
+      CONSOLE_PAGE_TITLE: ${CONSOLE_PAGE_TITLE:-Minecraft Control Plane}
+      MC_ADMIN_REPO_ROOT: /workspace
+      MC_ADMIN_CONSOLE_DATA_DIR: /workspace/data/console
+      BACKUP_COMPANION_ROOT: /backup-companion
+      TARGET_STACK_ROOT: ${TARGET_STACK_ROOT}
+      TARGET_DATA_DIR: ${TARGET_DATA_DIR}
+      TARGET_BACKUPS_DIR: ${TARGET_BACKUPS_DIR}
+      TARGET_ACCESS_DIR: ${TARGET_ACCESS_DIR}
+      TARGET_INVITE_PLAYERS_FILE: ${TARGET_INVITE_PLAYERS_FILE}
+      TARGET_SYNC_WHITELIST_SCRIPT: ${TARGET_SYNC_WHITELIST_SCRIPT}
+      TARGET_PROXY_CONTAINER: ${TARGET_PROXY_CONTAINER}
+      TARGET_LOBBY_CONTAINER: ${TARGET_LOBBY_CONTAINER}
+      TARGET_SURVIVAL_CONTAINER: ${TARGET_SURVIVAL_CONTAINER}
+      TARGET_CREATIVE_CONTAINER: ${TARGET_CREATIVE_CONTAINER}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      LP_DB_HOST: ${LP_DB_HOST}
+      LP_DB_PORT: ${LP_DB_PORT}
+      LP_BOOTSTRAP_MEMBER_PLAYERS: ${LP_BOOTSTRAP_MEMBER_PLAYERS}
+      LP_BOOTSTRAP_MOD_PLAYERS: ${LP_BOOTSTRAP_MOD_PLAYERS}
+      LP_BOOTSTRAP_ADMIN_PLAYERS: ${LP_BOOTSTRAP_ADMIN_PLAYERS}
+    ports:
+      - "${ADMIN_BIND_IP}:${CONSOLE_PORT:-8088}:8088"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workspace
+      - ${TARGET_STACK_ROOT}:/target/stack
+      - ${BACKUP_COMPANION_ROOT:-../mc-backup-google-drive}:/backup-companion
+    networks:
+      - admin
+
+  console-worker:
+    image: ${CONSOLE_IMAGE:-mc-paper-admin-console:2026.05.26}
+    container_name: mc-admin-console-worker
+    restart: unless-stopped
+    command:
+      - python
+      - -m
+      - app.worker
+    environment:
+      TZ: ${TZ}
+      CONSOLE_ADMIN_USER: ${CONSOLE_ADMIN_USER:-admin}
+      CONSOLE_ADMIN_PASSWORD: ${CONSOLE_ADMIN_PASSWORD:-change-me-console-admin}
+      CONSOLE_MOD_USER: ${CONSOLE_MOD_USER:-mod}
+      CONSOLE_MOD_PASSWORD: ${CONSOLE_MOD_PASSWORD:-change-me-console-mod}
+      CONSOLE_SESSION_SECRET: ${CONSOLE_SESSION_SECRET:-change-me-console-session-secret}
+      CONSOLE_PAGE_TITLE: ${CONSOLE_PAGE_TITLE:-Minecraft Control Plane}
+      MC_ADMIN_REPO_ROOT: /workspace
+      MC_ADMIN_CONSOLE_DATA_DIR: /workspace/data/console
+      BACKUP_COMPANION_ROOT: /backup-companion
+      TARGET_STACK_ROOT: ${TARGET_STACK_ROOT}
+      TARGET_DATA_DIR: ${TARGET_DATA_DIR}
+      TARGET_BACKUPS_DIR: ${TARGET_BACKUPS_DIR}
+      TARGET_ACCESS_DIR: ${TARGET_ACCESS_DIR}
+      TARGET_INVITE_PLAYERS_FILE: ${TARGET_INVITE_PLAYERS_FILE}
+      TARGET_SYNC_WHITELIST_SCRIPT: ${TARGET_SYNC_WHITELIST_SCRIPT}
+      TARGET_PROXY_CONTAINER: ${TARGET_PROXY_CONTAINER}
+      TARGET_LOBBY_CONTAINER: ${TARGET_LOBBY_CONTAINER}
+      TARGET_SURVIVAL_CONTAINER: ${TARGET_SURVIVAL_CONTAINER}
+      TARGET_CREATIVE_CONTAINER: ${TARGET_CREATIVE_CONTAINER}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      LP_DB_HOST: ${LP_DB_HOST}
+      LP_DB_PORT: ${LP_DB_PORT}
+      LP_BOOTSTRAP_MEMBER_PLAYERS: ${LP_BOOTSTRAP_MEMBER_PLAYERS}
+      LP_BOOTSTRAP_MOD_PLAYERS: ${LP_BOOTSTRAP_MOD_PLAYERS}
+      LP_BOOTSTRAP_ADMIN_PLAYERS: ${LP_BOOTSTRAP_ADMIN_PLAYERS}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workspace
+      - ${TARGET_STACK_ROOT}:/target/stack
+      - ${BACKUP_COMPANION_ROOT:-../mc-backup-google-drive}:/backup-companion
+    networks:
+      - admin
+
   portainer:
     image: ${PORTAINER_IMAGE}
     container_name: mc-admin-portainer

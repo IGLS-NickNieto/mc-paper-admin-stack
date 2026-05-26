@@ -1,0 +1,71 @@
+{
+  "delayed": [
+    {
+      "bedrock_risk_level": "medium",
+      "name": "Coordinates HUD",
+      "notes": "Only if it behaves cleanly for Bedrock clients."
+    },
+    {
+      "bedrock_risk_level": "medium",
+      "name": "Nether Portal Coords",
+      "notes": "Add only after staged testing."
+    },
+    {
+      "bedrock_risk_level": "medium",
+      "name": "Universal Dyeing",
+      "notes": "Delay until baseline stability is proven."
+    }
+  ],
+  "safe_now": [
+    {
+      "bedrock_risk_level": "safe",
+      "name": "AFK Display",
+      "notes": "Vanilla-friendly scoreboard-style utility."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Anti Enderman Grief",
+      "notes": "Gameplay cleanup with no custom assets."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Multiplayer Sleep",
+      "notes": "Low-risk vanilla quality-of-life change."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Double Shulker Shells",
+      "notes": "Loot-table tweak only."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "More Mob Heads",
+      "notes": "Vanilla item outcomes only."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Player Head Drops",
+      "notes": "Vanilla-compatible loot-table behavior."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Silence Mobs",
+      "notes": "Utility-only behavior change."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Track Statistics",
+      "notes": "Operational scoreboard/stat tracking."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Wandering Trades",
+      "notes": "Vanilla trade-table tweak."
+    },
+    {
+      "bedrock_risk_level": "safe",
+      "name": "Durability Ping",
+      "notes": "Safe if kept vanilla and text-only."
+    }
+  ]
+}
