@@ -23,7 +23,7 @@
       "world_id": "lobby-hub"
     },
     {
-      "artifact_path": "world-library/survival-main.zip",
+      "artifact_path": "world-library/survival-main.tgz",
       "checksum": "",
       "compatibility_tags": [
         "survival"
